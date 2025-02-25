@@ -1,0 +1,21 @@
+@use "./variables" as *;
+
+main {
+  display: flex;
+  flex-direction: row;
+}
+
+.stamps-container {
+  width: 240px;
+  border: 1px solid #D1D5DB;
+  border-top: none;
+
+  .header {
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 700;
+    color: #111827;
+    padding: $spacing-sm;
+    border-bottom: 1px solid #D1D5DB;
+  }
+}
