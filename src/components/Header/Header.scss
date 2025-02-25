@@ -1,0 +1,45 @@
+@use "../../variables" as *;
+
+.header {
+  padding: $spacing-sm $spacing-md;
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .document_title {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #111827;
+  }
+
+  .buttons-container {
+    display: flex;
+    gap: $spacing-sm;
+  }
+
+  .button {
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: $spacing-sm;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+}
+
+.primary {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background-color: $primary-accent-color;
+  color: #FFFFFF;
+  border: none;
+}
+.secondary {
+  background-color: transparent;
+  color: #2A70C0;
+  border: 1px solid #2A70C0;
+}
