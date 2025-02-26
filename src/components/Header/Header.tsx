@@ -1,13 +1,15 @@
 import "./Header.scss";
 import { DownloadIcon, SaveIcon } from "../utils/icons";
 
-export default function Header() {
+type Header = {
+	filename: string;
+};
+
+export default function Header({filename}: Header)  {
   return (
 		<header className="header">
 			<nav className="nav">
-				<p className="document_title">
-					Certificate of Origin – AW-156415645184
-				</p>
+				<p className="document_title">{filename}</p>
 				<div className="buttons-container">
 					<button className="button secondary">Cancel</button>
 					<button className="button primary">
