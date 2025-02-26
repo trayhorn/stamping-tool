@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import './App.scss';
 import Header from './components/Header/Header';
 import { Document, Page, pdfjs, Thumbnail } from "react-pdf";
@@ -23,10 +23,35 @@ function App() {
 		}
 	}
 
+	useEffect(() => {
+		const dropboxEl = document.getElementById("dropbox");
+
+		function handleDrop(event: DragEvent) {
+			event.preventDefault();
+			event.stopPropagation();
+			setFile(event.dataTransfer.files[0]);
+		}
+
+		function handleDragOver(event: DragEvent) {
+			event.preventDefault();
+		}
+
+		dropboxEl?.addEventListener("dragover", handleDragOver);
+		dropboxEl?.addEventListener("drop", handleDrop);
+
+		return () => {
+			dropboxEl?.removeEventListener("dragover", handleDragOver);
+			dropboxEl?.removeEventListener("drop", handleDrop);
+		}
+	}, [])
+
   return (
 		<>
 			{!file && (
 				<form action="#">
+					<div id="dropbox">
+						<p>Place your file here</p>
+					</div>
 					<label htmlFor="id-1">Please attach the PDF</label>
 					<input
 						type="file"
