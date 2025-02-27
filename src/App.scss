@@ -19,16 +19,3 @@ main {
     border-bottom: 1px solid $border-color;
   }
 }
-
-.stamps-list {
-  list-style: none;
-  padding: $spacing-md;
-  margin: 0;
-  display: flex;
-  justify-content: space-around;
-  gap: $spacing-sm;
-
-  .stamp {
-    cursor: pointer;
-  }
-}

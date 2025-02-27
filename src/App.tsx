@@ -5,6 +5,7 @@ import { pdfjs } from "react-pdf";
 import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
 import FilePreview from "./components/FilePreview/FilePreview";
+import StampsBox from "./components/StampsBox/StampsBox";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	"pdfjs-dist/build/pdf.worker.min.mjs",
@@ -12,7 +13,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 function App() {
-	const [file, setFile] = useState<File | null>(null);
+	// Set the static file for development convenience
+	const [file, setFile] = useState<File | string>("/public/sample.pdf");
   const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
 
@@ -45,25 +47,7 @@ function App() {
 					<Header filename={file.name} />
 
 					<main>
-						<div className="sidebar">
-							<h2 className="heading">Stamps</h2>
-							<ul className="stamps-list">
-								<li className="stamp-item">
-									<img
-										className="stamp"
-										src="/images/stamp_1.png"
-										alt="stamp_1"
-									/>
-								</li>
-								<li className="stamp-item">
-									<img
-										className="stamp"
-										src="/images/stamp_2.png"
-										alt="stamp_2"
-									/>
-								</li>
-							</ul>
-						</div>
+						<StampsBox />
 
 						<FileView
 							file={file}
