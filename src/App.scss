@@ -8,51 +8,14 @@ main {
 .sidebar {
   min-width: 240px;
   height: 942px;
-  border: 1px solid #D1D5DB;
+  border: 1px solid $border-color;
   border-top: none;
 
   .heading {
     font-size: 16px;
-    line-height: 1.5;
     font-weight: 700;
     color: #111827;
     padding: $spacing-sm;
-    border-bottom: 1px solid #D1D5DB;
+    border-bottom: 1px solid $border-color;
   }
-}
-
-.document-section {
-  flex: 1;
-
-  .page {
-    background-color: #F8F9FA !important;
-  }
-
-  .page > [class*="canvas"] { 
-    margin: 0 auto;
-    padding: 50px 0;
-  }
-}
-
-.thumbnail-document {
-  padding: $spacing-md;
-}
-
-.thumbnail {
-  display: block;
-  border: 1px solid #D1D5DB;
-}
-
-.thumbnail + .thumbnail {
-  margin-top: $spacing-sm;
-}
-
-.sidebar-preview {
-  overflow: auto;
-}
-
-#dropbox {
-  width: 300px;
-  height: 300px;
-  border: 2px solid black;
 }

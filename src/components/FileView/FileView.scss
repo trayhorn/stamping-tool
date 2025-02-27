@@ -1,0 +1,12 @@
+.document-section {
+  flex: 1;
+
+  .page {
+    background-color: #F8F9FA !important;
+  }
+
+  .page > [class*="canvas"] { 
+    margin: 0 auto;
+    padding: 50px 0;
+  }
+}

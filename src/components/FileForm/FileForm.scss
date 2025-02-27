@@ -1,0 +1,22 @@
+@use "../../variables" as *;
+
+.file-form,
+#dropbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.file-form {
+  width: 100vw;
+  height: 100vh;
+}
+
+#dropbox {
+  gap: $spacing-sm;
+  width: 500px;
+  height: 500px;
+  border: 2px solid #2A70C0;
+  border-radius: 8px;
+}

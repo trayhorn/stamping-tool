@@ -1,0 +1,18 @@
+@use "../../variables" as *;
+
+.sidebar-preview {
+  overflow: auto;
+
+  .thumbnail-document {
+    padding: $spacing-md;
+  }
+
+  .thumbnail {
+    display: block;
+    border: 1px solid $border-color;
+  }
+}
+
+.thumbnail + .thumbnail {
+  margin-top: $spacing-sm;
+}
