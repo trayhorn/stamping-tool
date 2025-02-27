@@ -47,7 +47,24 @@ function App() {
 					<main>
 						<div className="sidebar">
 							<h2 className="heading">Stamps</h2>
+							<ul className="stamps-list">
+								<li className="stamp-item">
+									<img
+										className="stamp"
+										src="/images/stamp_1.png"
+										alt="stamp_1"
+									/>
+								</li>
+								<li className="stamp-item">
+									<img
+										className="stamp"
+										src="/images/stamp_2.png"
+										alt="stamp_2"
+									/>
+								</li>
+							</ul>
 						</div>
+
 						<FileView
 							file={file}
 							onLoadSuccess={onDocumentLoadSuccess}
