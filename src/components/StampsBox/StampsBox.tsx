@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 import "./StampsBox.scss";
 
-export default function StampsBox() {
+type StampsBox = {
+	setStampCoordinates: (top: number, left: number) => void;
+};
 
-	const containerRef = useRef<HTMLDivElement | null>(null)
+export default function StampsBox({ setStampCoordinates }: StampsBox) {
+	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -31,7 +34,6 @@ export default function StampsBox() {
 			clone.classList.add("clone");
 
 			if (el.parentElement) {
-				console.log(el.parentElement.getBoundingClientRect());
 				clone.style.top = `${el.parentElement.offsetTop}px`;
 				clone.style.left = `${el.parentElement.offsetLeft}px`;
 			}
@@ -53,19 +55,30 @@ export default function StampsBox() {
 		};
 
 		const handleMouseUp = () => {
+			const pdfPage = document.querySelector(".react-pdf__Page__canvas");
+
+			console.log(pdfPage?.getBoundingClientRect());
+
+			const { top: pageTop, left: pageLeft } =
+				pdfPage?.getBoundingClientRect();
+
+			const { top: stampTop, left: stampLeft } =
+				clone?.getBoundingClientRect();
+
+			setStampCoordinates(stampTop - pageTop, stampLeft - pageLeft);
+
 			document.removeEventListener("mousemove", handleMouseMove);
 			document.removeEventListener("mouseup", handleMouseUp);
 		};
 
-		container?.addEventListener('mousedown', handleMouseDown);
+		container?.addEventListener("mousedown", handleMouseDown);
 
 		return () => {
-			container?.removeEventListener('mousedown', handleMouseDown);
-		}
-	}, [])
+			container?.removeEventListener("mousedown", handleMouseDown);
+		};
+	}, []);
 
-
-  return (
+	return (
 		<div className="sidebar">
 			<h2 className="heading">Stamps</h2>
 			<div className="stamps-list" ref={containerRef}>
@@ -73,7 +86,7 @@ export default function StampsBox() {
 					<img
 						draggable="false"
 						className="stamp"
-						src="/public/images/AttachmentDateStamp-55mmx55mm-300dpi.png"
+						src="/images/AttachmentDateStamp-55mmx55mm-300dpi.png"
 						alt="stamp_1"
 					/>
 				</div>
@@ -81,7 +94,7 @@ export default function StampsBox() {
 					<img
 						draggable="false"
 						className="stamp"
-						src="/public/images/ChamberStamp-55mmx55mm-300dpi.png"
+						src="/images/ChamberStamp-55mmx55mm-300dpi.png"
 						alt="stamp_2"
 					/>
 				</div>
@@ -89,7 +102,7 @@ export default function StampsBox() {
 					<img
 						draggable="false"
 						className="stamp"
-						src="/public/images/Notary_55x55canvas300dpi.png"
+						src="/images/Notary_55x55canvas300dpi.png"
 						alt="stamp_3"
 					/>
 				</div>

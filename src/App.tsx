@@ -14,9 +14,18 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 function App() {
 	const [file, setFile] = useState<File | null>(null);
-	
+
   const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
+
+	const [stampTop, setStampTop] = useState<number | undefined>(undefined);
+	const [stampLeft, setStampLeft] = useState<number | undefined>(undefined);
+
+	function setStampCoordinates(top: number, left: number): void {
+		setStampTop(top);
+		setStampLeft(left);
+	}
+
 
 	function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
 		setNumPages(numPages);
@@ -47,12 +56,13 @@ function App() {
 					<Header file={file} clearFile={() => setFile(null)} />
 
 					<main>
-						<StampsBox />
+						<StampsBox setStampCoordinates={setStampCoordinates} />
 
 						<FileView
 							file={file}
 							onLoadSuccess={onDocumentLoadSuccess}
 							pageNum={pageNum}
+							stampCoordinates={{ stampTop, stampLeft }}
 						/>
 						<FilePreview
 							file={file}
