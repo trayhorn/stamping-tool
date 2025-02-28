@@ -13,8 +13,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 function App() {
-	// Set the static file for development convenience
-	const [file, setFile] = useState<File | string>("/public/sample.pdf");
+	const [file, setFile] = useState<File | null>(null);
+	
   const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
 
@@ -44,7 +44,7 @@ function App() {
 
 			{file && (
 				<>
-					<Header filename={file.name} />
+					<Header file={file} clearFile={() => setFile(null)} />
 
 					<main>
 						<StampsBox />
