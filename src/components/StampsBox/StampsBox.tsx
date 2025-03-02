@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
 import "./StampsBox.scss";
+import { StampCoordinate } from "../../App";
 
 type StampsBox = {
-	setStampCoordinates: (top: number, left: number) => void;
+	setStampCoordinates: (top: StampCoordinate, left: StampCoordinate) => void;
+	setStampUrl: (url: string) => void;
 };
 
-export default function StampsBox({ setStampCoordinates }: StampsBox) {
+export default function StampsBox({ setStampCoordinates, setStampUrl }: StampsBox) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -54,29 +56,30 @@ export default function StampsBox({ setStampCoordinates }: StampsBox) {
 			clone.style.left = `${clone.offsetLeft - newX}px`;
 		};
 
-		const handleMouseUp = () => {
-			const pdfPage = document.querySelector(".react-pdf__Page__canvas");
+		const handleMouseUp = (e: MouseEvent) => {
+			const pdfPage = document.querySelector(".react-pdf__Page__canvas") as HTMLCanvasElement | null;
+			const clone = e.target as HTMLElement | null;
 
-			console.log(pdfPage?.getBoundingClientRect());
+			if (!pdfPage || !clone) return;
 
-			const { top: pageTop, left: pageLeft } =
-				pdfPage?.getBoundingClientRect();
-
-			const { top: stampTop, left: stampLeft } =
-				clone?.getBoundingClientRect();
+			const { top: pageTop, left: pageLeft } = pdfPage.getBoundingClientRect();
+			const { top: stampTop, left: stampLeft } = clone.getBoundingClientRect();
 
 			setStampCoordinates(stampTop - pageTop, stampLeft - pageLeft);
+			setStampUrl(clone.getAttribute("src") || "");
 
 			document.removeEventListener("mousemove", handleMouseMove);
 			document.removeEventListener("mouseup", handleMouseUp);
 		};
 
+
 		container?.addEventListener("mousedown", handleMouseDown);
 
 		return () => {
 			container?.removeEventListener("mousedown", handleMouseDown);
+			setStampCoordinates(undefined, undefined);
 		};
-	}, []);
+	}, [setStampCoordinates, setStampUrl]);
 
 	return (
 		<div className="sidebar">
