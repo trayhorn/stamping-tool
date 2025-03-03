@@ -14,7 +14,7 @@ type FileView = {
 	pageNum: number;
 	stampCoordinates: stampCoordinates;
 	stampImageUrl: string;
-	setFileUrl: (blob: Blob) => void;
+	setFileUrl: (data: string) => void;
 };
 
 export default function PageView({
@@ -91,7 +91,7 @@ export default function PageView({
 			pdfDocRef.current = await PDFDocument.load(pdfBytes);
 			setPdfBlob(newBlob);
 
-			setFileUrl(newBlob);
+			setFileUrl(URL.createObjectURL(newBlob));
 
 			document.querySelectorAll(".clone").forEach((el) => el.remove());
 		}

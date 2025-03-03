@@ -1,15 +1,12 @@
 @use "../../variables" as *;
 
 .stamps-list {
-  position: sticky;
-  top: 0;
   padding: $spacing-md;
   margin: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 8px;
   row-gap: $spacing-sm;
-  z-index: 5;
 
   .stamp-item {
     position: relative;

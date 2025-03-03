@@ -5,20 +5,29 @@ type Header = {
 	file: File;
 	urlToDownload: string;
 	clearFile: () => void;
+	clearFileUrl: () => void;
 };
 
-export default function Header({ file, urlToDownload, clearFile }: Header) {
+export default function Header({ file, urlToDownload, clearFile, clearFileUrl }: Header) {
 	const randomId = crypto.randomUUID();
+
+	const handleClick = () => {
+		clearFileUrl();
+		clearFile();
+	};
 
 	return (
 		<header className="header">
 			<nav className="nav">
 				<p className="document_title">{file.name}</p>
 				<div className="buttons-container">
-					<button className="button secondary" onClick={clearFile}>
+					<button className="button secondary" onClick={handleClick}>
 						Cancel
 					</button>
-					<button className="download_button" disabled={urlToDownload ? false : true}>
+					<button
+						className="download_button"
+						disabled={urlToDownload ? false : true}
+					>
 						<a
 							href={urlToDownload}
 							download={randomId + ".pdf"}

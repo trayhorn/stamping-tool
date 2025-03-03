@@ -30,17 +30,8 @@ function App() {
 		setStampLeft(left);
 	}
 
-	function createFileUrl(blob: Blob) {
-		setFileUrl(window.URL.createObjectURL(blob));
-	}
-
-
 	function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
 		setNumPages(numPages);
-	}
-
-	function onItemClick(num: number): void {
-		setPageNum(num);
 	}
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +56,7 @@ function App() {
 						file={file}
 						urlToDownload={fileUrl}
 						clearFile={() => setFile(null)}
+						clearFileUrl={() => setFileUrl("")}
 					/>
 
 					<main>
@@ -79,13 +71,13 @@ function App() {
 							pageNum={pageNum}
 							stampCoordinates={{ stampTop, stampLeft }}
 							stampImageUrl={stampUrl}
-							setFileUrl={createFileUrl}
+							setFileUrl={(data: string) => setFileUrl(data)}
 						/>
 						<FilePreview
 							file={file}
 							onLoadSuccess={onDocumentLoadSuccess}
 							numPages={numPages}
-							onItemClick={onItemClick}
+							onItemClick={(num) => setPageNum(num)}
 						/>
 					</main>
 				</>
