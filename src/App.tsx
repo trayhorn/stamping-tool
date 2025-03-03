@@ -16,7 +16,7 @@ export type StampCoordinate = number | undefined;
 
 function App() {
 	const [file, setFile] = useState<File | null>(null);
-
+	const [fileUrl, setFileUrl] = useState<string>('');
 
   const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
@@ -28,6 +28,10 @@ function App() {
 	function setStampCoordinates(top: StampCoordinate, left: StampCoordinate): void {
 		setStampTop(top);
 		setStampLeft(left);
+	}
+
+	function createFileUrl(blob: Blob) {
+		setFileUrl(window.URL.createObjectURL(blob));
 	}
 
 
@@ -57,7 +61,11 @@ function App() {
 
 			{file && (
 				<>
-					<Header file={file} clearFile={() => setFile(null)} />
+					<Header
+						file={file}
+						urlToDownload={fileUrl}
+						clearFile={() => setFile(null)}
+					/>
 
 					<main>
 						<StampsBox
@@ -71,6 +79,7 @@ function App() {
 							pageNum={pageNum}
 							stampCoordinates={{ stampTop, stampLeft }}
 							stampImageUrl={stampUrl}
+							setFileUrl={createFileUrl}
 						/>
 						<FilePreview
 							file={file}

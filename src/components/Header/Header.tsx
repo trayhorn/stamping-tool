@@ -1,20 +1,14 @@
 import "./Header.scss";
 import { DownloadIcon, SaveIcon } from "../utils/icons";
-import { useEffect, useState } from "react";
 
 type Header = {
 	file: File;
+	urlToDownload: string;
 	clearFile: () => void;
 };
 
-export default function Header({ file, clearFile }: Header) {
-	const [fileUrl, setFileUrl] = useState<string>("");
-
+export default function Header({ file, urlToDownload, clearFile }: Header) {
 	const randomId = crypto.randomUUID();
-
-	useEffect(() => {
-		setFileUrl(window.URL.createObjectURL(file));
-	}, [file]);
 
 	return (
 		<header className="header">
@@ -24,10 +18,16 @@ export default function Header({ file, clearFile }: Header) {
 					<button className="button secondary" onClick={clearFile}>
 						Cancel
 					</button>
-					<a href={fileUrl} download={randomId + ".pdf"} className="button primary">
-						<DownloadIcon />
-						Download PDF
-					</a>
+					<button className="download_button" disabled={urlToDownload ? false : true}>
+						<a
+							href={urlToDownload}
+							download={randomId + ".pdf"}
+							className="primary"
+						>
+							<DownloadIcon />
+							Download PDF
+						</a>
+					</button>
 					<button className="button primary">
 						<SaveIcon />
 						Save and Close

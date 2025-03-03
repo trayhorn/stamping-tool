@@ -13,7 +13,8 @@ type FileView = {
 	onLoadSuccess: ({ numPages }: { numPages: number }) => void;
 	pageNum: number;
 	stampCoordinates: stampCoordinates;
-	stampImageUrl: string
+	stampImageUrl: string;
+	setFileUrl: (blob: Blob) => void;
 };
 
 export default function PageView({
@@ -22,15 +23,14 @@ export default function PageView({
 	pageNum,
 	stampCoordinates,
 	stampImageUrl,
+	setFileUrl,
 }: FileView) {
-
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 
 	useEffect(() => {
 		async function renderPdf() {
-
 			const existingPdfBytes = await file.arrayBuffer();
 			pdfDocRef.current = await PDFDocument.load(existingPdfBytes);
 			const pdfBytes = await pdfDocRef.current.save();
@@ -47,7 +47,10 @@ export default function PageView({
 			return;
 		}
 
-		async function embedImage(left: number | undefined, top: number | undefined) {
+		async function embedImage(
+			left: number | undefined,
+			top: number | undefined
+		) {
 			if (!pdfDocRef.current) return;
 
 			const pngImageBytes = await fetch(stampImageUrl).then((res) =>
@@ -88,9 +91,11 @@ export default function PageView({
 			pdfDocRef.current = await PDFDocument.load(pdfBytes);
 			setPdfBlob(newBlob);
 
+			setFileUrl(newBlob);
+
 			document.querySelectorAll(".clone").forEach((el) => el.remove());
 		}
-	}
+	};
 
 	return (
 		<section className="document-section">

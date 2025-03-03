@@ -30,6 +30,32 @@
     text-decoration: none;
     cursor: pointer;
   }
+
+  .download_button {
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: $spacing-sm;
+    border-radius: 8px;
+    text-decoration: none;
+    background-color: $primary-accent-color;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+
+    & > a {
+      text-decoration: none;
+    }
+  }
+
+  .download_button:disabled {
+    background-color: #a5cbf8;
+    pointer-events: none;
+  }
+
+  .download_button:disabled > a {
+    background-color: #a5cbf8;
+  }
 }
 
 .primary {
