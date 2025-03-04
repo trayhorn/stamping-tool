@@ -5,11 +5,16 @@ type FilePreview = {
 	file: File;
 	onLoadSuccess: ({ numPages }: { numPages: number }) => void;
 	numPages: number | undefined;
-  onItemClick: (num: number) => void;
+	handleItemClick: (num: number) => void;
 };
 
 
-export default function FilePreview({ file, onLoadSuccess, numPages, onItemClick }: FilePreview) {
+export default function FilePreview({
+	file,
+	onLoadSuccess,
+	numPages,
+	handleItemClick,
+}: FilePreview) {
 	return (
 		<div className="sidebar sidebar-preview">
 			<h2 className="heading">Preview</h2>
@@ -25,7 +30,7 @@ export default function FilePreview({ file, onLoadSuccess, numPages, onItemClick
 							width={205}
 							className="thumbnail"
 							pageNumber={i + 1}
-							onItemClick={({ pageNumber }) => onItemClick(pageNumber)}
+							onItemClick={({ pageNumber }) => handleItemClick(pageNumber)}
 						/>
 					);
 				})}

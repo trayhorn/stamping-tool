@@ -13,6 +13,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export type StampCoordinate = number | undefined;
+export type Stamp = {
+	top: number;
+	left: number;
+	url: string;
+}
 
 function App() {
 	const [file, setFile] = useState<File | null>(null);
@@ -24,6 +29,18 @@ function App() {
 	const [stampTop, setStampTop] = useState<StampCoordinate>(undefined);
 	const [stampLeft, setStampLeft] = useState<StampCoordinate>(undefined);
 	const [stampUrl, setStampUrl] = useState<string>('');
+
+	// New approach
+
+	const [stamps, setStamps] = useState<Record<number, Stamp[]>>({});
+	
+	const handleSetStamps = (newStamp: Stamp) => {
+		setStamps((prev) => ({
+			...prev,
+			[pageNum]: [...(prev[pageNum] || []), newStamp]
+		}));
+	}
+
 
 	function setStampCoordinates(top: StampCoordinate, left: StampCoordinate): void {
 		setStampTop(top);
@@ -63,10 +80,12 @@ function App() {
 						<StampsBox
 							setStampCoordinates={setStampCoordinates}
 							setStampUrl={setStampUrl}
+							handleSetStamps={handleSetStamps}
 						/>
 
 						<FileView
 							file={file}
+							stamps={stamps}
 							onLoadSuccess={onDocumentLoadSuccess}
 							pageNum={pageNum}
 							stampCoordinates={{ stampTop, stampLeft }}
@@ -77,7 +96,7 @@ function App() {
 							file={file}
 							onLoadSuccess={onDocumentLoadSuccess}
 							numPages={numPages}
-							onItemClick={(num) => setPageNum(num)}
+							handleItemClick={(num) => setPageNum(num)}
 						/>
 					</main>
 				</>

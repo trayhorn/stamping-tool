@@ -1,13 +1,18 @@
 import { useEffect, useRef } from "react";
 import "./StampsBox.scss";
-import { StampCoordinate } from "../../App";
+import { StampCoordinate, Stamp } from "../../App";
 
 type StampsBox = {
 	setStampCoordinates: (top: StampCoordinate, left: StampCoordinate) => void;
 	setStampUrl: (url: string) => void;
+	handleSetStamps: (newStamp: Stamp) => void;
 };
 
-export default function StampsBox({ setStampCoordinates, setStampUrl }: StampsBox) {
+export default function StampsBox({
+	setStampCoordinates,
+	setStampUrl,
+	handleSetStamps,
+}: StampsBox) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -57,21 +62,36 @@ export default function StampsBox({ setStampCoordinates, setStampUrl }: StampsBo
 		};
 
 		const handleMouseUp = (e: MouseEvent) => {
-			const pdfPage = document.querySelector(".react-pdf__Page__canvas") as HTMLCanvasElement | null;
+			const pdfPage = document.querySelector(
+				".react-pdf__Page__canvas"
+			) as HTMLCanvasElement | null;
 			const clone = e.target as HTMLElement | null;
 
 			if (!pdfPage || !clone) return;
 
+			console.log(clone.getBoundingClientRect());
+			console.log(pdfPage.getBoundingClientRect());
+
 			const { top: pageTop, left: pageLeft } = pdfPage.getBoundingClientRect();
 			const { top: stampTop, left: stampLeft } = clone.getBoundingClientRect();
 
-			setStampCoordinates(stampTop - pageTop, stampLeft - pageLeft);
+			setStampCoordinates(stampTop - pageTop, stampLeft - pageLeft); // delete
+
+			const newStamp = {
+				top: stampTop,
+				left: stampLeft,
+				url: clone.getAttribute("src") || "",
+			};
+
+			handleSetStamps(newStamp);
+
 			setStampUrl(clone.getAttribute("src") || "");
+
+			clone.remove();
 
 			document.removeEventListener("mousemove", handleMouseMove);
 			document.removeEventListener("mouseup", handleMouseUp);
 		};
-
 
 		container?.addEventListener("mousedown", handleMouseDown);
 
@@ -79,7 +99,7 @@ export default function StampsBox({ setStampCoordinates, setStampUrl }: StampsBo
 			container?.removeEventListener("mousedown", handleMouseDown);
 			setStampCoordinates(undefined, undefined);
 		};
-	}, [setStampCoordinates, setStampUrl]);
+	}, [handleSetStamps, setStampCoordinates, setStampUrl]);
 
 	return (
 		<div className="sidebar">

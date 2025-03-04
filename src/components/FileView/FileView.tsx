@@ -2,6 +2,8 @@ import "./FileView.scss";
 import { Document, Page } from "react-pdf";
 import { PDFDocument } from "pdf-lib";
 import { useEffect, useState, useRef } from "react";
+import Stamp from "../Stamp/Stamp";
+import { Stamp as StampType } from "../../App";
 
 type stampCoordinates = {
 	stampTop: number | undefined;
@@ -10,6 +12,7 @@ type stampCoordinates = {
 
 type FileView = {
 	file: File;
+	stamps: Record<number, StampType[]>;
 	onLoadSuccess: ({ numPages }: { numPages: number }) => void;
 	pageNum: number;
 	stampCoordinates: stampCoordinates;
@@ -19,6 +22,7 @@ type FileView = {
 
 export default function PageView({
 	file,
+	stamps,
 	onLoadSuccess,
 	pageNum,
 	stampCoordinates,
@@ -68,20 +72,11 @@ export default function PageView({
 					height: 100,
 				});
 			}
-
-			// Approach when saving after each stamp
-
-			// const pdfBytes = await pdfDocRef.current.save();
-			// const newBlob = new Blob([pdfBytes], { type: "application/pdf" });
-
-			// pdfDocRef.current = await PDFDocument.load(pdfBytes);
-			// setPdfBlob(newBlob);
 		}
 
 		embedImage(stampCoordinates.stampLeft, stampCoordinates.stampTop);
 	}, [stampImageUrl, pageNum, stampCoordinates]);
 
-	// Approach when saving all changes at once
 
 	const saveDocument = async () => {
 		if (pdfDocRef.current) {
@@ -93,7 +88,7 @@ export default function PageView({
 
 			setFileUrl(URL.createObjectURL(newBlob));
 
-			document.querySelectorAll(".clone").forEach((el) => el.remove());
+			// document.querySelectorAll(".clone").forEach((el) => el.remove());
 		}
 	};
 
@@ -108,6 +103,9 @@ export default function PageView({
 					renderAnnotationLayer={false}
 					pageNumber={pageNum}
 				/>
+				{stamps[pageNum] && stamps[pageNum].map(({top, left, url}, i) => {
+					return <Stamp key={i} top={top} left={left} url={url} />;
+				})}
 			</Document>
 		</section>
 	);
