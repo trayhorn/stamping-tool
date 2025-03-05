@@ -13,7 +13,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export type StampCoordinate = number | undefined;
-export type Stamp = {
+export type StampType = {
 	top: number;
 	left: number;
 	url: string;
@@ -22,34 +22,21 @@ export type Stamp = {
 function App() {
 	const [file, setFile] = useState<File | null>(null);
 	const [fileUrl, setFileUrl] = useState<string>('');
-
   const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
+	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
 
-	const [stampTop, setStampTop] = useState<StampCoordinate>(undefined);
-	const [stampLeft, setStampLeft] = useState<StampCoordinate>(undefined);
-	const [stampUrl, setStampUrl] = useState<string>('');
-
-	// New approach
-
-	const [stamps, setStamps] = useState<Record<number, Stamp[]>>({});
-	
-	const handleSetStamps = (newStamp: Stamp) => {
-		setStamps((prev) => ({
-			...prev,
-			[pageNum]: [...(prev[pageNum] || []), newStamp]
-		}));
-	}
-
-
-	function setStampCoordinates(top: StampCoordinate, left: StampCoordinate): void {
-		setStampTop(top);
-		setStampLeft(left);
-	}
 
 	function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
 		setNumPages(numPages);
 	}
+
+	const handleSetStamps = (newStamp: StampType) => {
+		setStamps((prev) => ({
+			...prev,
+			[pageNum]: [...(prev[pageNum] || []), newStamp],
+		}));
+	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
@@ -77,20 +64,16 @@ function App() {
 					/>
 
 					<main>
-						<StampsBox
-							setStampCoordinates={setStampCoordinates}
-							setStampUrl={setStampUrl}
-							handleSetStamps={handleSetStamps}
-						/>
+						<StampsBox handleSetStamps={handleSetStamps} />
 
 						<FileView
 							file={file}
 							stamps={stamps}
 							onLoadSuccess={onDocumentLoadSuccess}
 							pageNum={pageNum}
-							stampCoordinates={{ stampTop, stampLeft }}
-							stampImageUrl={stampUrl}
+							numPages={numPages}
 							setFileUrl={(data: string) => setFileUrl(data)}
+							clearStamps={() => setStamps({})}
 						/>
 						<FilePreview
 							file={file}

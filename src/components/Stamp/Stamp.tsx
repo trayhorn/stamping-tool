@@ -1,10 +1,10 @@
-import { Stamp as StampType } from "../../App";
+import { StampType } from "../../App";
 import "./Stamp.scss";
 
 export default function Stamp({ top, left, url }: StampType) {
 	return (
-    <img
-      style={{top, left}}
+		<img
+			style={{ top, left }}
 			draggable="false"
 			className="stamp clone"
 			src={url}

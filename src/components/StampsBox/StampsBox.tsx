@@ -1,16 +1,12 @@
 import { useEffect, useRef } from "react";
 import "./StampsBox.scss";
-import { StampCoordinate, Stamp } from "../../App";
+import { StampType } from "../../App";
 
 type StampsBox = {
-	setStampCoordinates: (top: StampCoordinate, left: StampCoordinate) => void;
-	setStampUrl: (url: string) => void;
-	handleSetStamps: (newStamp: Stamp) => void;
+	handleSetStamps: (newStamp: StampType) => void;
 };
 
 export default function StampsBox({
-	setStampCoordinates,
-	setStampUrl,
 	handleSetStamps,
 }: StampsBox) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
@@ -69,23 +65,15 @@ export default function StampsBox({
 
 			if (!pdfPage || !clone) return;
 
-			console.log(clone.getBoundingClientRect());
-			console.log(pdfPage.getBoundingClientRect());
-
-			const { top: pageTop, left: pageLeft } = pdfPage.getBoundingClientRect();
-			const { top: stampTop, left: stampLeft } = clone.getBoundingClientRect();
-
-			setStampCoordinates(stampTop - pageTop, stampLeft - pageLeft); // delete
+			const { top, left } = clone.getBoundingClientRect();
 
 			const newStamp = {
-				top: stampTop,
-				left: stampLeft,
+				top,
+				left,
 				url: clone.getAttribute("src") || "",
 			};
 
 			handleSetStamps(newStamp);
-
-			setStampUrl(clone.getAttribute("src") || "");
 
 			clone.remove();
 
@@ -97,9 +85,8 @@ export default function StampsBox({
 
 		return () => {
 			container?.removeEventListener("mousedown", handleMouseDown);
-			setStampCoordinates(undefined, undefined);
 		};
-	}, [handleSetStamps, setStampCoordinates, setStampUrl]);
+	}, [handleSetStamps]);
 
 	return (
 		<div className="sidebar">
