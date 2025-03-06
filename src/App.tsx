@@ -14,6 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 export type StampCoordinate = number | undefined;
 export type StampType = {
+	id: string;
 	top: number;
 	left: number;
 	url: string;
@@ -42,6 +43,15 @@ function App() {
 		if (e.target.files) {
 			setFile(e.target.files[0]);
 		}
+	}
+
+	const deleteStamp = (id: string) => {
+		setStamps(prev => {
+			return {
+				...prev,
+				[pageNum]: stamps[pageNum].filter(el => el.id !== id)
+			}
+		})
 	}
 
 
@@ -74,6 +84,7 @@ function App() {
 							numPages={numPages}
 							setFileUrl={(data: string) => setFileUrl(data)}
 							clearStamps={() => setStamps({})}
+							deleteStamp={deleteStamp}
 						/>
 						<FilePreview
 							file={file}

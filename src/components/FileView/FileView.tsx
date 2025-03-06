@@ -13,6 +13,7 @@ type FileView = {
 	numPages: number | undefined;
 	setFileUrl: (data: string) => void;
 	clearStamps: () => void;
+	deleteStamp: (id: string) => void;
 };
 
 export default function PageView({
@@ -23,9 +24,9 @@ export default function PageView({
 	numPages,
 	setFileUrl,
 	clearStamps,
+	deleteStamp,
 }: FileView) {
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
-
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 
 	useEffect(() => {
@@ -41,17 +42,19 @@ export default function PageView({
 		renderPdf();
 	}, [file]);
 
-	const embedStamp = async ({top, left, url}: StampType, pageNumber: number) => {
+	const embedStamp = async (
+		{ top, left, url }: StampType,
+		pageNumber: number
+	) => {
 		if (!pdfDocRef.current) return;
 
-		
 		const pngImageBytes = await fetch(url).then((res) => res.arrayBuffer());
 
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
 		currentPage.drawImage(pngImage, {
-			x: left - 240- 30,
+			x: left - 240 - 30,
 			y: 942 - top + 76.6 - 150,
 			width: 100,
 			height: 100,
@@ -83,6 +86,10 @@ export default function PageView({
 		}
 	};
 
+	const handleStampClick = (id: string): void => {
+		deleteStamp(id);
+	};
+
 	return (
 		<section className="document-section">
 			<button onClick={saveDocument}>Save</button>
@@ -95,8 +102,14 @@ export default function PageView({
 					pageNumber={pageNum}
 				/>
 				{stamps[pageNum] &&
-					stamps[pageNum].map(({ top, left, url }, i) => {
-						return <Stamp key={i} top={top} left={left} url={url} />;
+					stamps[pageNum].map((el, i) => {
+						return (
+							<Stamp
+								key={i}
+								data={el}
+								onClick={handleStampClick}
+							/>
+						);
 					})}
 			</Document>
 		</section>

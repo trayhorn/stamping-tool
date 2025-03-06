@@ -65,15 +65,20 @@ export default function StampsBox({
 
 			if (!pdfPage || !clone) return;
 
-			const { top, left } = clone.getBoundingClientRect();
+			const pageRect = pdfPage.getBoundingClientRect();
+			const cloneRect = clone.getBoundingClientRect();
 
-			const newStamp = {
-				top,
-				left,
-				url: clone.getAttribute("src") || "",
-			};
+			if (cloneRect.top > pageRect.top
+				&& cloneRect.left > pageRect.left) {
+				const newStamp = {
+					id: crypto.randomUUID(),
+					top: cloneRect.top + window.scrollY,
+					left: cloneRect.left,
+					url: clone.getAttribute("src") || "",
+				};
 
-			handleSetStamps(newStamp);
+				handleSetStamps(newStamp);
+			}
 
 			clone.remove();
 
