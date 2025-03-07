@@ -54,6 +54,21 @@ function App() {
 		})
 	}
 
+	const updateStampPosition = (updatedStamp: StampType) => {
+		console.log('calling update state');
+		const index = stamps[pageNum].findIndex(el => el.id === updatedStamp.id);
+	
+		setStamps((prev) => {
+			return {
+				...prev,
+				[pageNum]: prev[pageNum].map((stamp, i) =>
+					i === index ? updatedStamp : stamp
+				),
+			};
+		});
+
+	}
+
 
   return (
 		<>
@@ -85,7 +100,8 @@ function App() {
 							setFileUrl={(data: string) => setFileUrl(data)}
 							clearStamps={() => setStamps({})}
 							deleteStamp={deleteStamp}
-						/>
+							updateStampPosition={updateStampPosition}
+						/>``
 						<FilePreview
 							file={file}
 							onLoadSuccess={onDocumentLoadSuccess}

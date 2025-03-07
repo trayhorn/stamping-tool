@@ -14,6 +14,7 @@ type FileView = {
 	setFileUrl: (data: string) => void;
 	clearStamps: () => void;
 	deleteStamp: (id: string) => void;
+	updateStampPosition: (updatedStamp: StampType) => void;
 };
 
 export default function PageView({
@@ -25,6 +26,7 @@ export default function PageView({
 	setFileUrl,
 	clearStamps,
 	deleteStamp,
+	updateStampPosition,
 }: FileView) {
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 	const pdfDocRef = useRef<PDFDocument | null>(null);
@@ -108,6 +110,7 @@ export default function PageView({
 								key={i}
 								data={el}
 								onClick={handleStampClick}
+								updateStampPosition={updateStampPosition}
 							/>
 						);
 					})}
