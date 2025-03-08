@@ -1,6 +1,8 @@
 import { StampType } from "../../App";
 import "./Stamp.scss";
 import { useRef } from "react";
+// import { ResizableBox } from "react-resizable";
+
 
 type StampComponentType = {
 	data: StampType;
@@ -11,6 +13,9 @@ type StampComponentType = {
 export default function Stamp({ data, onClick, updateStampPosition }: StampComponentType) {
 	const { id, top, left, url } = data;
 	const stampRef = useRef<HTMLImageElement | null>(null);
+
+	// const [isShowing, setIsShowing] = useState(false);
+	
 
 	let startX = 0;
 	let startY = 0;
@@ -55,18 +60,52 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 	};
 
 	return (
-		// <div className="stamp-container active">
-		<img
-			ref={stampRef}
-			onMouseDown={handleMouseDown}
-			onMouseUp={handleMouseUp}
-			onDoubleClick={() => onClick(id)}
-			style={{ top, left }}
-			draggable="false"
-			className="stamp clone"
-			src={url}
-			alt="stamp_1"
-		/>
-		// </div>
+		<>
+			{/* {isShowing ? (
+				<ResizableBox
+					className="box"
+					width={100}
+					height={100}
+					style={{ top, left }}
+				>
+					<img
+						ref={stampRef}
+						onMouseDown={handleMouseDown}
+						onMouseUp={handleMouseUp}
+						onClick={() => setIsShowing((prev: boolean) => !prev)}
+						onDoubleClick={() => onClick(id)}
+						style={{ width: "100%" }}
+						draggable="false"
+						className="stamp clone"
+						src={url}
+						alt="stamp_1"
+					/>
+				</ResizableBox>
+			) : (
+				<img
+					ref={stampRef}
+					onMouseDown={handleMouseDown}
+					onMouseUp={handleMouseUp}
+					onClick={() => setIsShowing((prev: boolean) => !prev)}
+					onDoubleClick={() => onClick(id)}
+					style={{ top, left }}
+					draggable="false"
+					className="stamp clone"
+					src={url}
+					alt="stamp_1"
+				/>
+			)} */}
+			<img
+				ref={stampRef}
+				onMouseDown={handleMouseDown}
+				onMouseUp={handleMouseUp}
+				onDoubleClick={() => onClick(id)}
+				style={{ top, left }}
+				draggable="false"
+				className="stamp clone"
+				src={url}
+				alt="stamp_1"
+			/>
+		</>
 	);
 }
