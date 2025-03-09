@@ -45,7 +45,7 @@ export default function PageView({
 	}, [file]);
 
 	const embedStamp = async (
-		{ top, left, url }: StampType,
+		{ top, left, url, width, height }: StampType,
 		pageNumber: number
 	) => {
 		if (!pdfDocRef.current) return;
@@ -58,8 +58,8 @@ export default function PageView({
 		currentPage.drawImage(pngImage, {
 			x: left - 240 - 30,
 			y: 942 - top + 76.6 - 150,
-			width: 100,
-			height: 100,
+			width,
+			height,
 		});
 	};
 

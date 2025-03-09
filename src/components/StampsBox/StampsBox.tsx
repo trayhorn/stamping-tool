@@ -75,6 +75,8 @@ export default function StampsBox({
 					top: cloneRect.top + window.scrollY,
 					left: cloneRect.left,
 					url: clone.getAttribute("src") || "",
+					width: 100,
+					height: 100
 				};
 
 				handleSetStamps(newStamp);

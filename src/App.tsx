@@ -18,6 +18,8 @@ export type StampType = {
 	top: number;
 	left: number;
 	url: string;
+	width: number;
+	height: number;
 }
 
 function App() {
@@ -32,18 +34,18 @@ function App() {
 		setNumPages(numPages);
 	}
 
+	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files) {
+			setFile(e.target.files[0]);
+		}
+	}
+
 	const handleSetStamps = (newStamp: StampType) => {
 		setStamps((prev) => ({
 			...prev,
 			[pageNum]: [...(prev[pageNum] || []), newStamp],
 		}));
 	};
-
-	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-		if (e.target.files) {
-			setFile(e.target.files[0]);
-		}
-	}
 
 	const deleteStamp = (id: string) => {
 		setStamps(prev => {
@@ -55,9 +57,8 @@ function App() {
 	}
 
 	const updateStampPosition = (updatedStamp: StampType) => {
-		console.log('calling update state');
 		const index = stamps[pageNum].findIndex(el => el.id === updatedStamp.id);
-	
+
 		setStamps((prev) => {
 			return {
 				...prev,

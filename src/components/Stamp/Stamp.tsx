@@ -1,7 +1,7 @@
 import { StampType } from "../../App";
 import "./Stamp.scss";
-import { useRef } from "react";
-// import { ResizableBox } from "react-resizable";
+import { useState, useRef } from "react";
+import { ResizableBox } from "react-resizable";
 
 
 type StampComponentType = {
@@ -11,11 +11,13 @@ type StampComponentType = {
 };
 
 export default function Stamp({ data, onClick, updateStampPosition }: StampComponentType) {
-	const { id, top, left, url } = data;
-	const stampRef = useRef<HTMLImageElement | null>(null);
+	const { id, top, left, url, width, height } = data;
 
-	// const [isShowing, setIsShowing] = useState(false);
-	
+	const [isShowing, setIsShowing] = useState(false);
+	const [newWidth, setNewWidth] = useState<number>(width);
+	const [newHeight, setNewHeight] = useState(height);
+
+	const stampRef = useRef<HTMLImageElement | null>(null);
 
 	let startX = 0;
 	let startY = 0;
@@ -51,6 +53,8 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 				top: stampRect.top + window.scrollY,
 				left: stampRect.left,
 				url,
+				width,
+				height,
 			};
 
 			updateStampPosition(updatedStamp);
@@ -59,24 +63,39 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 		document.removeEventListener("mousemove", handleMouseMove);
 	};
 
+	const handleResizeStop = () => {
+		const updatedStamp = {
+			id,
+			top,
+			left,
+			url,
+			width: newWidth,
+			height: newHeight
+		};
+
+		updateStampPosition(updatedStamp);
+	}
+
 	return (
 		<>
-			{/* {isShowing ? (
+			{isShowing ? (
 				<ResizableBox
 					className="box"
-					width={100}
-					height={100}
+					width={newWidth}
+					height={newHeight}
 					style={{ top, left }}
+					onResize={(_, { size }) => {
+						setNewWidth(size.width);
+						setNewHeight(size.height);
+					}}
+					onResizeStop={handleResizeStop}
 				>
 					<img
 						ref={stampRef}
-						onMouseDown={handleMouseDown}
-						onMouseUp={handleMouseUp}
 						onClick={() => setIsShowing((prev: boolean) => !prev)}
-						onDoubleClick={() => onClick(id)}
 						style={{ width: "100%" }}
 						draggable="false"
-						className="stamp clone"
+						className="clone"
 						src={url}
 						alt="stamp_1"
 					/>
@@ -88,24 +107,13 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 					onMouseUp={handleMouseUp}
 					onClick={() => setIsShowing((prev: boolean) => !prev)}
 					onDoubleClick={() => onClick(id)}
-					style={{ top, left }}
+					style={{ top, left, width: newWidth, height: newHeight }}
 					draggable="false"
 					className="stamp clone"
 					src={url}
 					alt="stamp_1"
 				/>
-			)} */}
-			<img
-				ref={stampRef}
-				onMouseDown={handleMouseDown}
-				onMouseUp={handleMouseUp}
-				onDoubleClick={() => onClick(id)}
-				style={{ top, left }}
-				draggable="false"
-				className="stamp clone"
-				src={url}
-				alt="stamp_1"
-			/>
+			)}
 		</>
 	);
 }

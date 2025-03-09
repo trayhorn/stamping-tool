@@ -8,6 +8,12 @@
   border: 1px solid black;
 }
 
+.react-resizable-handle-se {
+  z-index: 1;
+}
+
+
+// Library css
 
 .layoutRoot {
   display: flex;
@@ -21,7 +27,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: #ccc;
+  background: transparent;
   border: 1px solid black;
   text-align: center;
   padding: 10px;
@@ -29,7 +35,6 @@
   margin-bottom: 10px;
   overflow: hidden;
   position: relative;
-  margin: 20px;
 }
 
 .custom-box {
