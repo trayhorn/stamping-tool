@@ -84,6 +84,7 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 					width={newWidth}
 					height={newHeight}
 					style={{ top, left }}
+					lockAspectRatio={true}
 					onResize={(_, { size }) => {
 						setNewWidth(size.width);
 						setNewHeight(size.height);
@@ -93,26 +94,34 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 					<img
 						ref={stampRef}
 						onClick={() => setIsShowing((prev: boolean) => !prev)}
-						style={{ width: "100%" }}
 						draggable="false"
-						className="clone"
+						className="stamp clone"
 						src={url}
 						alt="stamp_1"
 					/>
 				</ResizableBox>
 			) : (
-				<img
-					ref={stampRef}
-					onMouseDown={handleMouseDown}
-					onMouseUp={handleMouseUp}
-					onClick={() => setIsShowing((prev: boolean) => !prev)}
-					onDoubleClick={() => onClick(id)}
-					style={{ top, left, width: newWidth, height: newHeight }}
-					draggable="false"
-					className="stamp clone"
-					src={url}
-					alt="stamp_1"
-				/>
+				<div
+					style={{
+						position: "absolute",
+						top,
+						left,
+						width: newWidth,
+						height: newHeight,
+					}}
+				>
+					<img
+						ref={stampRef}
+						onMouseDown={handleMouseDown}
+						onMouseUp={handleMouseUp}
+						onClick={() => setIsShowing((prev: boolean) => !prev)}
+						onDoubleClick={() => onClick(id)}
+						draggable="false"
+						className="stamp clone"
+						src={url}
+						alt="stamp_1"
+					/>
+				</div>
 			)}
 		</>
 	);
