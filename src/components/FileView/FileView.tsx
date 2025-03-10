@@ -31,6 +31,8 @@ export default function PageView({
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 
+	const pdfPage = document.querySelector(".react-pdf__Page__canvas")?.getBoundingClientRect();
+
 	useEffect(() => {
 		async function renderPdf() {
 			const existingPdfBytes = await file.arrayBuffer();
@@ -52,12 +54,16 @@ export default function PageView({
 
 		const pngImageBytes = await fetch(url).then((res) => res.arrayBuffer());
 
+		
+
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
+		// console.log({ x: left - pdfPage.left, y: 942 - (top - 126.6) - 200 });
+
 		currentPage.drawImage(pngImage, {
-			x: left - 240 - 30,
-			y: 942 - top + 76.6 - 150,
+			x: left - pdfPage.left,
+			y: 942 - (top - 126.6) - 200,
 			width,
 			height,
 		});
@@ -84,7 +90,7 @@ export default function PageView({
 			setPdfBlob(newBlob);
 
 			setFileUrl(URL.createObjectURL(newBlob));
-			clearStamps();
+			// clearStamps();
 		}
 	};
 
