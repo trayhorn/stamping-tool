@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
 import "./StampsBox.scss";
 import { StampType } from "../../App";
+import { FiPlus } from "react-icons/fi";
 
 type StampsBox = {
 	handleSetStamps: (newStamp: StampType) => void;
+	openModal: () => void;
 };
 
-export default function StampsBox({
-	handleSetStamps,
-}: StampsBox) {
+export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -70,8 +70,7 @@ export default function StampsBox({
 
 			console.dir(clone);
 
-			if (cloneRect.top > pageRect.top
-				&& cloneRect.left > (pageRect.left - 25)) {
+			if (cloneRect.top > pageRect.top && cloneRect.left > pageRect.left - 25) {
 				const newStamp = {
 					id: crypto.randomUUID(),
 					top: cloneRect.top + window.scrollY,
@@ -124,6 +123,9 @@ export default function StampsBox({
 						src="/images/Notary_55x55canvas300dpi.png"
 						alt="stamp_3"
 					/>
+				</div>
+				<div className="stamp-item add-stamp_container">
+					<FiPlus onClick={openModal} className="add-stamp" size="2rem" />
 				</div>
 			</div>
 		</div>

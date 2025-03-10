@@ -19,6 +19,24 @@
     width: 100px;
     height: 100px;
   }
+
+  .add-stamp_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+      border-color: $primary-accent-color;
+    }
+  }
+
+  .add-stamp_container:hover .add-stamp {
+    color: $primary-accent-color;
+  }
+
+  .add-stamp {
+    color: #4d5158;
+  }
 }
 
 .clone {

@@ -59,8 +59,6 @@ export default function PageView({
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
-		// console.log({ x: left - pdfPage.left, y: 942 - (top - 126.6) - 200 });
-
 		currentPage.drawImage(pngImage, {
 			x: left - pdfPage.left,
 			y: 942 - (top - 126.6) - 200,
@@ -90,7 +88,7 @@ export default function PageView({
 			setPdfBlob(newBlob);
 
 			setFileUrl(URL.createObjectURL(newBlob));
-			// clearStamps();
+			clearStamps();
 		}
 	};
 

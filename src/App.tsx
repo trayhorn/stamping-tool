@@ -6,6 +6,8 @@ import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
 import FilePreview from "./components/FilePreview/FilePreview";
 import StampsBox from "./components/StampsBox/StampsBox";
+import { createPortal } from "react-dom";
+import Modal from "./components/Modal/Modal";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	"pdfjs-dist/build/pdf.worker.min.mjs",
@@ -28,6 +30,8 @@ function App() {
   const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
 	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
+
+	const [isModalShowing, setIsModalShowing] = useState(false);
 
 
 	function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
@@ -90,8 +94,10 @@ function App() {
 					/>
 
 					<main>
-						<StampsBox handleSetStamps={handleSetStamps} />
-
+						<StampsBox
+							handleSetStamps={handleSetStamps}
+							openModal={() => setIsModalShowing(true)}
+						/>
 						<FileView
 							file={file}
 							stamps={stamps}
@@ -102,7 +108,8 @@ function App() {
 							clearStamps={() => setStamps({})}
 							deleteStamp={deleteStamp}
 							updateStampPosition={updateStampPosition}
-						/>``
+						/>
+						``
 						<FilePreview
 							file={file}
 							onLoadSuccess={onDocumentLoadSuccess}
@@ -112,6 +119,11 @@ function App() {
 					</main>
 				</>
 			)}
+			{isModalShowing &&
+				createPortal(
+					<Modal closeModal={() => setIsModalShowing(false)} />,
+					document.body
+				)}
 		</>
 	);
 }
