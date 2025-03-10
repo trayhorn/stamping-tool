@@ -85,6 +85,10 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 					height={newHeight}
 					style={{ top, left }}
 					lockAspectRatio={true}
+					resizeHandles={["sw", "se", "nw", "ne"]}
+					handle={(h, ref) => (
+						<span className={`custom-handle custom-handle-${h}`} ref={ref} />
+					)}
 					onResize={(_, { size }) => {
 						setNewWidth(size.width);
 						setNewHeight(size.height);
