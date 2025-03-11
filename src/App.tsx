@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
-import './App.scss';
-import Header from './components/Header/Header';
+import "./App.scss";
+import Header from "./components/Header/Header";
 import { pdfjs } from "react-pdf";
 import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
@@ -22,17 +22,16 @@ export type StampType = {
 	url: string;
 	width: number;
 	height: number;
-}
+};
 
 function App() {
 	const [file, setFile] = useState<File | null>(null);
-	const [fileUrl, setFileUrl] = useState<string>('');
-  const [numPages, setNumPages] = useState<number>();
+	const [fileUrl, setFileUrl] = useState<string>("");
+	const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
 	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
 
 	const [isModalShowing, setIsModalShowing] = useState(false);
-
 
 	function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
 		setNumPages(numPages);
@@ -42,7 +41,7 @@ function App() {
 		if (e.target.files) {
 			setFile(e.target.files[0]);
 		}
-	}
+	};
 
 	const handleSetStamps = (newStamp: StampType) => {
 		setStamps((prev) => ({
@@ -52,16 +51,16 @@ function App() {
 	};
 
 	const deleteStamp = (id: string) => {
-		setStamps(prev => {
+		setStamps((prev) => {
 			return {
 				...prev,
-				[pageNum]: stamps[pageNum].filter(el => el.id !== id)
-			}
-		})
-	}
+				[pageNum]: stamps[pageNum].filter((el) => el.id !== id),
+			};
+		});
+	};
 
-	const updateStampPosition = (updatedStamp: StampType) => {
-		const index = stamps[pageNum].findIndex(el => el.id === updatedStamp.id);
+	const updateStamp = (updatedStamp: StampType) => {
+		const index = stamps[pageNum].findIndex((el) => el.id === updatedStamp.id);
 
 		setStamps((prev) => {
 			return {
@@ -71,11 +70,9 @@ function App() {
 				),
 			};
 		});
+	};
 
-	}
-
-
-  return (
+	return (
 		<>
 			{!file && (
 				<FileForm
@@ -107,7 +104,7 @@ function App() {
 							setFileUrl={(data: string) => setFileUrl(data)}
 							clearStamps={() => setStamps({})}
 							deleteStamp={deleteStamp}
-							updateStampPosition={updateStampPosition}
+							updateStamp={updateStamp}
 						/>
 						``
 						<FilePreview

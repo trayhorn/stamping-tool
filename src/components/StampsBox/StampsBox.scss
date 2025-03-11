@@ -5,8 +5,7 @@
   margin: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 8px;
-  row-gap: $spacing-sm;
+  gap: $spacing-sm;
 
   .stamp-item {
     position: relative;
@@ -34,7 +33,7 @@
     color: $primary-accent-color;
   }
 
-  .add-stamp {
+  .add-stamp_icon {
     color: #4d5158;
   }
 }

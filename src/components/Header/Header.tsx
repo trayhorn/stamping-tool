@@ -9,12 +9,14 @@ type Header = {
 };
 
 export default function Header({ file, urlToDownload, clearFile, clearFileUrl }: Header) {
-	const randomId = crypto.randomUUID();
 
 	const handleClick = () => {
 		clearFileUrl();
 		clearFile();
 	};
+
+	const fileName = file.name
+		.slice(0, file.name.length - 4) + '-edited.pdf';
 
 	return (
 		<header className="header">
@@ -28,11 +30,7 @@ export default function Header({ file, urlToDownload, clearFile, clearFileUrl }:
 						className="download_button"
 						disabled={urlToDownload ? false : true}
 					>
-						<a
-							href={urlToDownload}
-							download={randomId + ".pdf"}
-							className="primary"
-						>
+						<a href={urlToDownload} download={fileName} className="primary">
 							<DownloadIcon />
 							Download PDF
 						</a>

@@ -3,14 +3,17 @@ import "./Stamp.scss";
 import { useState, useRef } from "react";
 import { ResizableBox } from "react-resizable";
 
-
 type StampComponentType = {
 	data: StampType;
 	onClick: (id: string) => void;
-	updateStampPosition: (updatedStamp: StampType) => void;
+	updateStamp: (updatedStamp: StampType) => void;
 };
 
-export default function Stamp({ data, onClick, updateStampPosition }: StampComponentType) {
+export default function Stamp({
+	data,
+	onClick,
+	updateStamp,
+}: StampComponentType) {
 	const { id, top, left, url, width, height } = data;
 
 	const [isShowing, setIsShowing] = useState(false);
@@ -57,7 +60,7 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 				height,
 			};
 
-			updateStampPosition(updatedStamp);
+			updateStamp(updatedStamp);
 		}
 
 		document.removeEventListener("mousemove", handleMouseMove);
@@ -70,11 +73,11 @@ export default function Stamp({ data, onClick, updateStampPosition }: StampCompo
 			left,
 			url,
 			width: newWidth,
-			height: newHeight
+			height: newHeight,
 		};
 
-		updateStampPosition(updatedStamp);
-	}
+		updateStamp(updatedStamp);
+	};
 
 	return (
 		<>

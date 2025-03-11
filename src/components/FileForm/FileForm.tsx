@@ -1,5 +1,5 @@
 import "./FileForm.scss";
-import { ChangeEvent, useState, useEffect } from "react";
+import { ChangeEvent, useState, useEffect, useRef } from "react";
 
 type FileForm = {
 	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -7,10 +7,11 @@ type FileForm = {
 };
 
 export default function FileForm({ onChange, onDrop }: FileForm) {
-  const [isDragging, setIsDragging] = useState<boolean>(false);
+	const [isDragging, setIsDragging] = useState<boolean>(false);
+	const dropboxRef = useRef<HTMLDivElement | null>(null)
 
 	useEffect(() => {
-		const dropboxEl = document.getElementById("dropbox");
+		const dropbox = dropboxRef.current;
 
 		function handleDrop(e: DragEvent) {
 			e.preventDefault();
@@ -29,24 +30,28 @@ export default function FileForm({ onChange, onDrop }: FileForm) {
       setIsDragging(false);
 		}
 
-    dropboxEl?.addEventListener("dragover", handleDragOver);
-    dropboxEl?.addEventListener('dragleave', handleDragLeave);
-		dropboxEl?.addEventListener("drop", handleDrop);
+    dropbox?.addEventListener("dragover", handleDragOver);
+    dropbox?.addEventListener('dragleave', handleDragLeave);
+		dropbox?.addEventListener("drop", handleDrop);
 
-    return () => {
-      dropboxEl?.removeEventListener("dragover", handleDragOver);
-      dropboxEl?.removeEventListener("dragleave", handleDragLeave);
-			dropboxEl?.removeEventListener("drop", handleDrop);
+		return () => {
+      dropbox?.removeEventListener("dragover", handleDragOver);
+      dropbox?.removeEventListener("dragleave", handleDragLeave);
+			dropbox?.removeEventListener("drop", handleDrop);
 		};
 	}, [onDrop]);
 
 	return (
-		<form action="#" className="file-form">
-			<div id="dropbox" style={isDragging ? {borderStyle: 'dashed'} : {}}>
-        <p>Drag and drop the file here</p>
-        <span>OR</span>
-        <label htmlFor="id-1">attach the PDF</label>
-        <input type="file" name="fileInput" id="id-1" onChange={onChange} />
+		<form className="file-form">
+			<div
+				id="dropbox"
+				ref={dropboxRef}
+				style={isDragging ? { borderStyle: "dashed" } : {}}
+			>
+				<p>Drag and drop the file here</p>
+				<span>OR</span>
+				<label htmlFor="id-1">attach the PDF</label>
+				<input type="file" name="fileInput" id="id-1" onChange={onChange} />
 			</div>
 		</form>
 	);

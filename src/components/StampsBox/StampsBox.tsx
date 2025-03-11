@@ -125,7 +125,7 @@ export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 					/>
 				</div>
 				<div className="stamp-item add-stamp_container">
-					<FiPlus onClick={openModal} className="add-stamp" size="2rem" />
+					<FiPlus onClick={openModal} className="add-stamp_icon" size="2rem" />
 				</div>
 			</div>
 		</div>

@@ -11,7 +11,6 @@ type FilePreview = {
 
 export default function FilePreview({
 	file,
-	onLoadSuccess,
 	numPages,
 	handleItemClick,
 }: FilePreview) {
@@ -21,7 +20,6 @@ export default function FilePreview({
 			<Document
 				className="thumbnail-document"
 				file={file}
-				onLoadSuccess={onLoadSuccess}
 			>
 				{[...Array(numPages)].map((_, i) => {
 					return (

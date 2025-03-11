@@ -14,7 +14,7 @@ type FileView = {
 	setFileUrl: (data: string) => void;
 	clearStamps: () => void;
 	deleteStamp: (id: string) => void;
-	updateStampPosition: (updatedStamp: StampType) => void;
+	updateStamp: (updatedStamp: StampType) => void;
 };
 
 export default function PageView({
@@ -26,12 +26,14 @@ export default function PageView({
 	setFileUrl,
 	clearStamps,
 	deleteStamp,
-	updateStampPosition,
+	updateStamp,
 }: FileView) {
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 
-	const pdfPage = document.querySelector(".react-pdf__Page__canvas")?.getBoundingClientRect();
+	const pdfPageRect = document
+		.querySelector(".react-pdf__Page__canvas")
+		?.getBoundingClientRect();
 
 	useEffect(() => {
 		async function renderPdf() {
@@ -54,17 +56,17 @@ export default function PageView({
 
 		const pngImageBytes = await fetch(url).then((res) => res.arrayBuffer());
 
-		
-
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
-		currentPage.drawImage(pngImage, {
-			x: left - pdfPage.left,
-			y: 942 - (top - 126.6) - 200,
-			width,
-			height,
-		});
+		if (pdfPageRect) {
+			currentPage.drawImage(pngImage, {
+				x: left - pdfPageRect.left,
+				y: currentPage.getHeight() - (top - 126.6) - width,
+				width,
+				height,
+			});
+		}
 	};
 
 	const saveDocument = async () => {
@@ -114,7 +116,7 @@ export default function PageView({
 								key={i}
 								data={el}
 								onClick={handleStampClick}
-								updateStampPosition={updateStampPosition}
+								updateStamp={updateStamp}
 							/>
 						);
 					})}

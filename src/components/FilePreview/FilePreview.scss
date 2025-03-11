@@ -11,8 +11,8 @@
     display: block;
     border: 1px solid $border-color;
   }
-}
 
-.thumbnail + .thumbnail {
-  margin-top: $spacing-sm;
+  .thumbnail + .thumbnail {
+    margin-top: $spacing-sm;
+  }
 }
