@@ -1,39 +1,33 @@
 import "./FileView.scss";
 import { Document, Page } from "react-pdf";
 import { PDFDocument } from "pdf-lib";
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import Stamp from "../Stamp/Stamp";
 import { StampType } from "../../App";
 
 type FileView = {
 	file: File;
+	pdfBlob: Blob | null;
+	passPdfBlob: (blob: Blob) => void;
+	pdfDocRef: React.RefObject<PDFDocument | null>;
 	stamps: Record<number, StampType[]>;
 	onLoadSuccess: ({ numPages }: { numPages: number }) => void;
 	pageNum: number;
-	numPages: number | undefined;
-	setFileUrl: (data: string) => void;
-	clearStamps: () => void;
 	deleteStamp: (id: string) => void;
 	updateStamp: (updatedStamp: StampType) => void;
 };
 
-export default function PageView({
+export default function FileView({
 	file,
+	pdfBlob,
+	passPdfBlob,
+	pdfDocRef,
 	stamps,
 	onLoadSuccess,
 	pageNum,
-	numPages,
-	setFileUrl,
-	clearStamps,
 	deleteStamp,
 	updateStamp,
 }: FileView) {
-	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
-	const pdfDocRef = useRef<PDFDocument | null>(null);
-
-	const pdfPageRect = document
-		.querySelector(".react-pdf__Page__canvas")
-		?.getBoundingClientRect();
 
 	useEffect(() => {
 		async function renderPdf() {
@@ -42,57 +36,11 @@ export default function PageView({
 			const pdfBytes = await pdfDocRef.current.save();
 			const blob = new Blob([pdfBytes], { type: "application/pdf" });
 
-			setPdfBlob(blob);
+			passPdfBlob(blob);
 		}
 
 		renderPdf();
-	}, [file]);
-
-	const embedStamp = async (
-		{ top, left, url, width, height }: StampType,
-		pageNumber: number
-	) => {
-		if (!pdfDocRef.current) return;
-
-		const pngImageBytes = await fetch(url).then((res) => res.arrayBuffer());
-
-		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
-		const currentPage = pdfDocRef.current.getPages()[pageNumber];
-
-		if (pdfPageRect) {
-			currentPage.drawImage(pngImage, {
-				x: left - pdfPageRect.left,
-				y: currentPage.getHeight() - (top - 126.6) - width,
-				width,
-				height,
-			});
-		}
-	};
-
-	const saveDocument = async () => {
-		if (pdfDocRef.current) {
-			await Promise.all(
-				[...Array(numPages)].map((_, i) => {
-					if (stamps[i + 1]) {
-						return Promise.all(
-							stamps[i + 1].map(async (el) => {
-								return embedStamp(el, i);
-							})
-						);
-					}
-				})
-			);
-
-			const pdfBytes = await pdfDocRef.current.save();
-			const newBlob = new Blob([pdfBytes], { type: "application/pdf" });
-
-			pdfDocRef.current = await PDFDocument.load(pdfBytes);
-			setPdfBlob(newBlob);
-
-			setFileUrl(URL.createObjectURL(newBlob));
-			clearStamps();
-		}
-	};
+	}, [file, passPdfBlob, pdfDocRef]);
 
 	const handleStampClick = (id: string): void => {
 		deleteStamp(id);
@@ -100,7 +48,6 @@ export default function PageView({
 
 	return (
 		<section className="document-section">
-			<button onClick={saveDocument}>Save</button>
 			<Document file={pdfBlob} onLoadSuccess={onLoadSuccess}>
 				<Page
 					className="page"

@@ -68,8 +68,6 @@ export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 			const pageRect = pdfPage.getBoundingClientRect();
 			const cloneRect = clone.getBoundingClientRect();
 
-			console.dir(clone);
-
 			if (cloneRect.top > pageRect.top && cloneRect.left > pageRect.left - 25) {
 				const newStamp = {
 					id: crypto.randomUUID(),

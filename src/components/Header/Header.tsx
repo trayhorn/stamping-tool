@@ -6,17 +6,22 @@ type Header = {
 	urlToDownload: string;
 	clearFile: () => void;
 	clearFileUrl: () => void;
+	saveDocument: () => void;
 };
 
-export default function Header({ file, urlToDownload, clearFile, clearFileUrl }: Header) {
-
+export default function Header({
+	file,
+	urlToDownload,
+	clearFile,
+	clearFileUrl,
+	saveDocument,
+}: Header) {
 	const handleClick = () => {
 		clearFileUrl();
 		clearFile();
 	};
 
-	const fileName = file.name
-		.slice(0, file.name.length - 4) + '-edited.pdf';
+	const fileName = file.name.slice(0, file.name.length - 4) + "-edited.pdf";
 
 	return (
 		<header className="header">
@@ -35,9 +40,9 @@ export default function Header({ file, urlToDownload, clearFile, clearFileUrl }:
 							Download PDF
 						</a>
 					</button>
-					<button className="button primary">
+					<button className="button primary" onClick={saveDocument}>
 						<SaveIcon />
-						Save and Close
+						Save
 					</button>
 				</div>
 			</nav>
