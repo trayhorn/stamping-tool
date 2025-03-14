@@ -1,6 +1,7 @@
 import { StampType } from "../../App";
 import "./Stamp.scss";
 import { useState, useRef, useEffect } from "react";
+import { FaRotateRight } from "react-icons/fa6";
 
 type StampComponentType = {
 	data: StampType;
@@ -16,9 +17,6 @@ export default function Stamp({
 	const { id, top, left, url, width, height } = data;
 
 	const [isShowing, setIsShowing] = useState(false);
-	const [newWidth, setNewWidth] = useState<number>(width);
-	const [newHeight, setNewHeight] = useState<number>(height);
-
 
 	const resizableRef = useRef<HTMLDivElement | null>(null);
 	const resizeTopLeftRef = useRef<HTMLSpanElement | null>(null);
@@ -72,12 +70,53 @@ export default function Stamp({
 		document.removeEventListener("mousemove", handleMouseMove);
 	};
 
+	// Rotation
+
+	const centerRef = useRef({ x: 0, y: 0 });
+
+	const rotateMouseDown = (e: React.MouseEvent) => {
+		console.log("calling MouseDown");
+		e.stopPropagation();
+
+		if (resizableRef.current) {
+			const elRect = resizableRef.current.getBoundingClientRect();
+
+			centerRef.current.x = elRect.left + elRect.width / 2;
+			centerRef.current.y = elRect.top + elRect.height / 2;
+
+			document.addEventListener("mouseup", rotateMouseUp);
+			document.addEventListener("mousemove", rotateMouseMove);
+		}
+	};
+
+	const rotateMouseMove = (e: MouseEvent) => {
+		console.log(resizableRef.current?.getBoundingClientRect());
+		const angle = Math.atan2(
+			e.pageY - centerRef.current.y,
+			e.pageX - centerRef.current.x
+		);
+		const convertedAngle = ((angle * 180) / Math.PI + 90 + 360) % 360;
+
+		if (resizableRef.current) {
+			resizableRef.current.style.transform = `rotate(${convertedAngle}deg)`;
+		}
+	};
+
+	const rotateMouseUp = () => {
+		const elRect = resizableRef.current?.getBoundingClientRect();
+
+		console.log(elRect);
+
+		document.removeEventListener("mousemove", rotateMouseMove);
+		document.removeEventListener('mouseup', rotateMouseUp);
+	};
+
 
 	useEffect(() => {
 		let x = 0;
 		let y = 0;
-		let elWidth = newWidth;
-		let elHeight = newHeight;
+		let elWidth = width;
+		let elHeight = height;
 
 		const resizableEl = resizableRef.current;
 
@@ -110,8 +149,6 @@ export default function Stamp({
 		};
 
 		const handleResizeUp = () => {
-			setNewHeight(elHeight);
-			setNewWidth(elWidth);
 
 			updateStamp({
 				...data,
@@ -155,8 +192,6 @@ export default function Stamp({
 			resizableEl.style.top = styles.top;
 			resizableEl.style.bottom = "";
 
-			setNewHeight(elHeight);
-			setNewWidth(elWidth);
 
 			updateStamp({
 				...data,
@@ -207,8 +242,6 @@ export default function Stamp({
 
 			const elRect = resizableEl.getBoundingClientRect();
 
-			setNewHeight(elHeight);
-			setNewWidth(elWidth);
 
 			updateStamp({
 				...data,
@@ -256,8 +289,6 @@ export default function Stamp({
 
 			const elRect = resizableEl.getBoundingClientRect();
 
-			setNewHeight(elHeight);
-			setNewWidth(elWidth);
 
 			updateStamp({
 				...data,
@@ -312,11 +343,15 @@ export default function Stamp({
 						position: "absolute",
 						top,
 						left,
-						width: newWidth,
-						height: newHeight,
+						width,
+						height,
 					}}
 				>
-					{/* <button className="rotate-btn">Rotate</button> */}
+					<FaRotateRight
+						className="rotate-btn"
+						onMouseDown={rotateMouseDown}
+						style={{ left: `${width / 2 - 8}px` }}
+					/>
 
 					<img
 						draggable="false"
@@ -349,8 +384,8 @@ export default function Stamp({
 						position: "absolute",
 						top,
 						left,
-						width: newWidth,
-						height: newHeight,
+						width,
+						height,
 					}}
 				>
 					<img
@@ -367,40 +402,4 @@ export default function Stamp({
 }
 
 
-	// Working on rotation
-
-	// const centerRef = useRef({ x: 0, y: 0 });
-
-	// const rotateMouseDown = () => {
-	// 	console.log("calling MouseDown");
-
-	// 	console.log(stampBoxRef.current);
-
-	// 	if (stampRef.current) {
-	// 		const elRect = stampRef.current.getBoundingClientRect();
-
-	// 		centerRef.current.x = elRect.left + elRect.width / 2;
-	// 		centerRef.current.y = elRect.top + elRect.height / 2;
-
-	// 		document.addEventListener('mouseup', rotateMouseUp);
-	// 		document.addEventListener("mousemove", rotateMouseMove);
-	// 	}
-	// };
-
-	// const rotateMouseMove = (e: MouseEvent) => {
-	// 	console.log('mousemove');
-	// 	const angle = Math.atan2(
-	// 		e.pageY - centerRef.current.y,
-	// 		e.pageX - centerRef.current.x
-	// 	);
-	// 	const convertedAngle = ((angle * 180) / Math.PI + 90 + 360) % 360;
-
-	// 	if (stampRef.current) {
-	// 		stampRef.current.style.transform = `rotate(${convertedAngle}deg)`;
-	// 	}
-	// };
-
-	// const rotateMouseUp = () => {
-	// 	document.removeEventListener("mousemove", rotateMouseMove);
-	// 	document.removeEventListener('mouseup', rotateMouseUp);
-	// };
+	
