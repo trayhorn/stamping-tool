@@ -11,10 +11,13 @@
 }
 
 .dragable-box {
-  border: 2px solid burlywood;
-  // width: 100px;
-  // height: 100px;
-  // position: absolute;
+  border: 2px solid rgba($color: #2A70C0, $alpha: 0.75);
+}
+
+.dragable-box, 
+.dragable-box img, 
+.resize-handle {
+  user-select: none;
 }
 
 .react-resizable-handle,
@@ -27,7 +30,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: rgb(254, 162, 43);
+  background-color: $primary-accent-color;
 }
 
 .top-left {

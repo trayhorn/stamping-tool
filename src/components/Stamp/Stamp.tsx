@@ -72,25 +72,12 @@ export default function Stamp({
 		document.removeEventListener("mousemove", handleMouseMove);
 	};
 
-	// const handleResizeStop = () => {
-	// 	const updatedStamp = {
-	// 		id,
-	// 		top,
-	// 		left,
-	// 		url,
-	// 		width: newWidth,
-	// 		height: newHeight,
-	// 	};
-
-	// 	updateStamp(updatedStamp);
-	// };
-
 
 	useEffect(() => {
 		let x = 0;
 		let y = 0;
-		let elWidth = 100;
-		let elHeight = 100;
+		let elWidth = newWidth;
+		let elHeight = newHeight;
 
 		const resizableEl = resizableRef.current;
 
@@ -101,7 +88,6 @@ export default function Stamp({
 		const styles = window.getComputedStyle(resizableEl);
 
 		const handleResizeDown = (e: MouseEvent) => {
-			console.log("calling mousedown");
 			e.stopPropagation();
 
 			y = e.clientY;
@@ -124,7 +110,15 @@ export default function Stamp({
 		};
 
 		const handleResizeUp = () => {
-			console.log("calling mouseup")
+			setNewHeight(elHeight);
+			setNewWidth(elWidth);
+
+			updateStamp({
+				...data,
+				width: elWidth,
+				height: elHeight,
+			});
+		
 			document.removeEventListener("mousemove", handleResizeMove);
 			document.removeEventListener("mouseup", handleResizeUp);
 		};
@@ -132,7 +126,6 @@ export default function Stamp({
 		// Resize Top Right
 
 		const handleResizeDownTopRight = (e: MouseEvent) => {
-			console.log("calling mousedownTOP");
 			e.stopPropagation();
 
 			resizableEl.style.bottom = styles.bottom;
@@ -141,8 +134,6 @@ export default function Stamp({
 			y = e.clientY;
 			x = e.clientX;
 
-			console.log({ x, y });
-
 			document.addEventListener("mousemove", handleResizeMoveTopRight);
 			document.addEventListener("mouseup", handleResizeUpTopRight);
 		};
@@ -150,8 +141,6 @@ export default function Stamp({
 		const handleResizeMoveTopRight = (e: MouseEvent) => {
 			const dy = e.clientY - y;
 			const dx = e.clientX - x;
-
-			console.log({ dy, dx });
 
 			elHeight = elHeight - dy;
 			elWidth = elWidth + dx;
@@ -163,10 +152,18 @@ export default function Stamp({
 		};
 
 		const handleResizeUpTopRight = () => {
-			console.log("calling mouseupTOP");
-
 			resizableEl.style.top = styles.top;
 			resizableEl.style.bottom = "";
+
+			setNewHeight(elHeight);
+			setNewWidth(elWidth);
+
+			updateStamp({
+				...data,
+				top: resizableEl.getBoundingClientRect().top + window.scrollY,
+				width: elWidth,
+				height: elHeight,
+			});
 
 			document.removeEventListener("mousemove", handleResizeMoveTopRight);
 			document.removeEventListener("mouseup", handleResizeUpTopRight);
@@ -175,7 +172,6 @@ export default function Stamp({
 		// Resize Top Left
 
 		const handleResizeDownTopLeft = (e: MouseEvent) => {
-			console.log("calling mousedownTopLeft");
 			e.stopPropagation();
 
 			resizableEl.style.bottom = styles.bottom;
@@ -186,8 +182,6 @@ export default function Stamp({
 			y = e.clientY;
 			x = e.clientX;
 
-			console.log({ x, y });
-
 			document.addEventListener("mousemove", handleResizeMoveTopLeft);
 			document.addEventListener("mouseup", handleResizeUpTopLeft);
 		};
@@ -195,8 +189,6 @@ export default function Stamp({
 		const handleResizeMoveTopLeft = (e: MouseEvent) => {
 			const dy = e.clientY - y;
 			const dx = e.clientX - x;
-
-			console.log({ dy, dx });
 
 			elHeight = elHeight - dy;
 			elWidth = elWidth - dx;
@@ -208,12 +200,23 @@ export default function Stamp({
 		};
 
 		const handleResizeUpTopLeft = () => {
-			console.log("calling mouseupTOP");
-
 			resizableEl.style.top = styles.top;
 			resizableEl.style.left = styles.left;
 			resizableEl.style.bottom = "";
 			resizableEl.style.right = "";
+
+			const elRect = resizableEl.getBoundingClientRect();
+
+			setNewHeight(elHeight);
+			setNewWidth(elWidth);
+
+			updateStamp({
+				...data,
+				top: elRect.top + window.scrollY,
+				left: elRect.left,
+				width: elWidth,
+				height: elHeight,
+			});
 
 			document.removeEventListener("mousemove", handleResizeMoveTopLeft);
 			document.removeEventListener("mouseup", handleResizeUpTopLeft);
@@ -222,7 +225,6 @@ export default function Stamp({
 		// Resize Bottom Left
 
 		const handleResizeDownBottomLeft = (e: MouseEvent) => {
-			console.log("calling mousedownTopLeft");
 			e.stopPropagation();
 
 			resizableEl.style.right = styles.right;
@@ -231,8 +233,6 @@ export default function Stamp({
 			y = e.clientY;
 			x = e.clientX;
 
-			console.log({ x, y });
-
 			document.addEventListener("mousemove", handleResizeMoveBottomLeft);
 			document.addEventListener("mouseup", handleResizeUpBottomLeft);
 		};
@@ -240,8 +240,6 @@ export default function Stamp({
 		const handleResizeMoveBottomLeft = (e: MouseEvent) => {
 			const dy = e.clientY - y;
 			const dx = e.clientX - x;
-
-			console.log({ dy, dx });
 
 			elHeight = elHeight + dy;
 			elWidth = elWidth - dx;
@@ -253,10 +251,20 @@ export default function Stamp({
 		};
 
 		const handleResizeUpBottomLeft = () => {
-			console.log("calling mouseupTOP");
-
 			resizableEl.style.left = styles.left;
 			resizableEl.style.right = "";
+
+			const elRect = resizableEl.getBoundingClientRect();
+
+			setNewHeight(elHeight);
+			setNewWidth(elWidth);
+
+			updateStamp({
+				...data,
+				left: elRect.left,
+				width: elWidth,
+				height: elHeight,
+			});
 
 			document.removeEventListener("mousemove", handleResizeMoveBottomLeft);
 			document.removeEventListener("mouseup", handleResizeUpBottomLeft);
@@ -294,7 +302,12 @@ export default function Stamp({
 					className="dragable-box"
 					onMouseDown={handleMouseDown}
 					onMouseUp={handleMouseUp}
-					onClick={() => setIsShowing((prev: boolean) => !prev)}
+					onClick={(e) => {
+						const el = e.target as HTMLElement;
+						if (el.classList.contains("stamp")) {
+							setIsShowing((prev: boolean) => !prev);
+						}
+					}}
 					style={{
 						position: "absolute",
 						top,
