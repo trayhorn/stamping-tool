@@ -2,6 +2,7 @@ import { StampType } from "../../App";
 import "./Stamp.scss";
 import { useState, useRef, useEffect } from "react";
 import { FaRotateRight } from "react-icons/fa6";
+import calculateCoordinates from "../utils/calculateCoordinates";
 
 type StampComponentType = {
 	data: StampType;
@@ -67,46 +68,24 @@ export default function Stamp({
 		const rect = resizableEl.getBoundingClientRect();
 
 		if (rotate !== 0) {
-			const computedStyle = window.getComputedStyle(resizableEl);
+			console.log("element rotated - updating stamp");
 
+			const computedStyle = window.getComputedStyle(resizableEl);
+			const transform = computedStyle.transform;
 			const newTop = rect.top;
 			const newLeft = rect.left;
 
-			const transform = computedStyle.transform;
-			let angle = 0;
+			const params = { newTop, newLeft, transform, width, height };
 
-			if (transform !== "none") {
-				console.log('updateStamp when dragging rotated');
-				const match = transform.match(
-					/matrix\(([^,]+), ([^,]+), ([^,]+), ([^,]+), ([^,]+), ([^)]+)\)/
-				);
-				if (match) {
-					const a = parseFloat(match[1]);
-					const b = parseFloat(match[2]);
-					angle = ((Math.atan2(b, a) * (180 / Math.PI) + 360) % 360) % 90;
-				}
-			}
-
-			const radians = (angle * Math.PI) / 180;
-
-			const initialLeft = Math.round(
-				newLeft +
-				(width / 2) * (Math.cos(radians) - 1) +
-				(height / 2) * Math.sin(radians)
-			);
-			const initialTop = Math.round(
-				newTop +
-				(width / 2) * Math.sin(radians) +
-				(height / 2) * (Math.cos(radians) - 1)
-			);
+			const coordinates = calculateCoordinates(params);
 
 			updateStamp({
 				...data,
-				top: initialTop,
-				left: initialLeft,
+				top: coordinates.initialTop,
+				left: coordinates.initialLeft,
 			});
 		} else {
-			console.log("updateStamp in handleMouseUp");
+			console.log("element isn't rotated - updating stamp");
 			updateStamp({
 				...data,
 				top: rect.top + window.scrollY,
