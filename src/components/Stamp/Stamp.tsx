@@ -1,21 +1,17 @@
 import { StampType } from "../../App";
 import "./Stamp.scss";
 import { useState, useRef, useEffect } from "react";
-import { FaRotateRight } from "react-icons/fa6";
+import { FaRotateRight, FaRegTrashCan } from "react-icons/fa6";
 import calculateCoordinates from "../utils/calculateCoordinates";
 
 type StampComponentType = {
 	data: StampType;
-	onClick: (id: string) => void;
+	onDeleteClick: (id: string) => void;
 	updateStamp: (updatedStamp: StampType) => void;
 };
 
-export default function Stamp({
-	data,
-	// onClick, for deleting the stamp
-	updateStamp,
-}: StampComponentType) {
-	const { top, left, url, width, height, rotate } = data;
+export default function Stamp({ data, onDeleteClick, updateStamp }: StampComponentType) {
+	const { id, top, left, url, width, height, rotate } = data;
 
 	const [isShowing, setIsShowing] = useState(false);
 
@@ -27,17 +23,12 @@ export default function Stamp({
 
 	let startX = 0;
 	let startY = 0;
-	let initialX = 0;
-	let initialY = 0;
 	let newX = 0;
 	let newY = 0;
 
 	const handleMouseDown = (e: React.MouseEvent) => {
 		startX = e.clientX;
 		startY = e.clientY;
-
-		initialX = e.clientX;
-		initialY = e.clientY;
 
 		document.addEventListener("mousemove", handleMouseMove);
 	};
@@ -48,7 +39,7 @@ export default function Stamp({
 
 		startX = e.clientX;
 		startY = e.clientY;
-	
+
 		if (resizableRef.current) {
 			resizableRef.current.style.top =
 				resizableRef.current.offsetTop - newY + "px";
@@ -62,8 +53,7 @@ export default function Stamp({
 		const el = e.target as HTMLElement;
 
 		if (!resizableEl) return;
-		// if (el.classList.contains("rotate-btn")) return;
-		// if (initialX === e.clientX && initialY === e.clientY) return;
+		if (el.classList.contains("rotate-btn")) return;
 
 		const rect = resizableEl.getBoundingClientRect();
 
@@ -96,7 +86,6 @@ export default function Stamp({
 		document.removeEventListener("mousemove", handleMouseMove);
 	};
 
-
 	// Rotation
 
 	const centerRef = useRef({ x: 0, y: 0 });
@@ -107,8 +96,8 @@ export default function Stamp({
 		if (resizableRef.current) {
 			const elRect = resizableRef.current.getBoundingClientRect();
 
-			centerRef.current.x = elRect.left + elRect.width / 2;
-			centerRef.current.y = elRect.top + elRect.height / 2;
+			centerRef.current.x = elRect.left + window.scrollX + elRect.width / 2;
+			centerRef.current.y = elRect.top + window.scrollY + elRect.height / 2;
 
 			document.addEventListener("mouseup", rotateMouseUp);
 			document.addEventListener("mousemove", rotateMouseMove);
@@ -143,9 +132,8 @@ export default function Stamp({
 		}
 
 		document.removeEventListener("mousemove", rotateMouseMove);
-		document.removeEventListener('mouseup', rotateMouseUp);
+		document.removeEventListener("mouseup", rotateMouseUp);
 	};
-
 
 	useEffect(() => {
 		let x = 0;
@@ -184,13 +172,12 @@ export default function Stamp({
 		};
 
 		const handleResizeUp = () => {
-
 			updateStamp({
 				...data,
 				width: elWidth,
 				height: elHeight,
 			});
-		
+
 			document.removeEventListener("mousemove", handleResizeMove);
 			document.removeEventListener("mouseup", handleResizeUp);
 		};
@@ -226,7 +213,6 @@ export default function Stamp({
 		const handleResizeUpTopRight = () => {
 			resizableEl.style.top = styles.top;
 			resizableEl.style.bottom = "";
-
 
 			updateStamp({
 				...data,
@@ -277,7 +263,6 @@ export default function Stamp({
 
 			const elRect = resizableEl.getBoundingClientRect();
 
-
 			updateStamp({
 				...data,
 				top: elRect.top + window.scrollY,
@@ -324,7 +309,6 @@ export default function Stamp({
 
 			const elRect = resizableEl.getBoundingClientRect();
 
-
 			updateStamp({
 				...data,
 				left: elRect.left,
@@ -357,8 +341,8 @@ export default function Stamp({
 				"mousedown",
 				handleResizeDownBottomLeft
 			);
-		}
-	})
+		};
+	});
 
 	return (
 		<>
@@ -388,6 +372,13 @@ export default function Stamp({
 						onMouseDown={rotateMouseDown}
 						style={{ left: `${width / 2 - 8}px` }}
 					/>
+
+					<div
+						className="delete-btn_wrapper"
+						onClick={() => onDeleteClick(id)}
+					>
+						<FaRegTrashCan className="delete-btn" />
+					</div>
 
 					<img
 						draggable="false"

@@ -62,7 +62,7 @@ export default function FileView({
 							<Stamp
 								key={i}
 								data={el}
-								onClick={handleStampClick}
+								onDeleteClick={handleStampClick}
 								updateStamp={updateStamp}
 							/>
 						);

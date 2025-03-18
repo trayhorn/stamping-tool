@@ -3,15 +3,29 @@
 .stamp {
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 
-.rotate-btn {
-  position: absolute;
-  top: -25px;
-}
+
 
 .dragable-box {
   border: 2px solid rgba($color: #2A70C0, $alpha: 0.75);
+
+  .rotate-btn {
+    position: absolute;
+    top: -25px;
+  }
+
+  .delete-btn {
+    position: absolute;
+    top: -25px;
+    right: 0;
+    cursor: pointer;
+  }
+
+  .delete-btn_wrapper:has(:hover, :focus) {
+    color: red;
+  }
 }
 
 .dragable-box, 

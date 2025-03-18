@@ -2,6 +2,7 @@ import { ChangeEvent, useState, useRef, useCallback } from "react";
 import "./App.scss";
 import Header from "./components/Header/Header";
 import { pdfjs } from "react-pdf";
+import { degrees } from 'pdf-lib';
 import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
 import FilePreview from "./components/FilePreview/FilePreview";
@@ -82,7 +83,7 @@ function App() {
 	}, []);
 
 	const embedStamp = async (
-		{ top, left, url, width, height }: StampType,
+		{ top, left, url, width, height, rotate }: StampType,
 		pageNumber: number
 	) => {
 		if (!pdfDocRef.current) return;
@@ -96,12 +97,15 @@ function App() {
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
+		console.log(degrees(rotate));
+
 		if (pdfPageRect) {
 			currentPage.drawImage(pngImage, {
 				x: left - pdfPageRect.left,
 				y: currentPage.getHeight() - (top - 102.4) - width,
 				width,
 				height,
+				rotate: degrees(rotate)
 			});
 		}
 	};
