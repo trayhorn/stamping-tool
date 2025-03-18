@@ -24,6 +24,7 @@ export type StampType = {
 	url: string;
 	width: number;
 	height: number;
+	rotate: number;
 };
 
 function App() {

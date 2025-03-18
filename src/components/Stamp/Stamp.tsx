@@ -14,7 +14,7 @@ export default function Stamp({
 	// onClick, for deleting the stamp
 	updateStamp,
 }: StampComponentType) {
-	const { id, top, left, url, width, height } = data;
+	const { top, left, url, width, height, rotate } = data;
 
 	const [isShowing, setIsShowing] = useState(false);
 
@@ -26,12 +26,17 @@ export default function Stamp({
 
 	let startX = 0;
 	let startY = 0;
+	let initialX = 0;
+	let initialY = 0;
 	let newX = 0;
 	let newY = 0;
 
 	const handleMouseDown = (e: React.MouseEvent) => {
 		startX = e.clientX;
 		startY = e.clientY;
+
+		initialX = e.clientX;
+		initialY = e.clientY;
 
 		document.addEventListener("mousemove", handleMouseMove);
 	};
@@ -42,7 +47,7 @@ export default function Stamp({
 
 		startX = e.clientX;
 		startY = e.clientY;
-
+	
 		if (resizableRef.current) {
 			resizableRef.current.style.top =
 				resizableRef.current.offsetTop - newY + "px";
@@ -51,31 +56,73 @@ export default function Stamp({
 		}
 	};
 
-	const handleMouseUp = () => {
-		const resizableEl = resizableRef.current?.getBoundingClientRect();
+	const handleMouseUp = (e: React.MouseEvent) => {
+		const resizableEl = resizableRef.current;
+		const el = e.target as HTMLElement;
 
-		if (resizableEl) {
-			const updatedStamp = {
-				id,
-				top: resizableEl.top + window.scrollY,
-				left: resizableEl.left,
-				url,
-				width,
-				height,
-			};
+		if (!resizableEl) return;
+		// if (el.classList.contains("rotate-btn")) return;
+		// if (initialX === e.clientX && initialY === e.clientY) return;
 
-			updateStamp(updatedStamp);
+		const rect = resizableEl.getBoundingClientRect();
+
+		if (rotate !== 0) {
+			const computedStyle = window.getComputedStyle(resizableEl);
+
+			const newTop = rect.top;
+			const newLeft = rect.left;
+
+			const transform = computedStyle.transform;
+			let angle = 0;
+
+			if (transform !== "none") {
+				console.log('updateStamp when dragging rotated');
+				const match = transform.match(
+					/matrix\(([^,]+), ([^,]+), ([^,]+), ([^,]+), ([^,]+), ([^)]+)\)/
+				);
+				if (match) {
+					const a = parseFloat(match[1]);
+					const b = parseFloat(match[2]);
+					angle = ((Math.atan2(b, a) * (180 / Math.PI) + 360) % 360) % 90;
+				}
+			}
+
+			const radians = (angle * Math.PI) / 180;
+
+			const initialLeft = Math.round(
+				newLeft +
+				(width / 2) * (Math.cos(radians) - 1) +
+				(height / 2) * Math.sin(radians)
+			);
+			const initialTop = Math.round(
+				newTop +
+				(width / 2) * Math.sin(radians) +
+				(height / 2) * (Math.cos(radians) - 1)
+			);
+
+			updateStamp({
+				...data,
+				top: initialTop,
+				left: initialLeft,
+			});
+		} else {
+			console.log("updateStamp in handleMouseUp");
+			updateStamp({
+				...data,
+				top: rect.top + window.scrollY,
+				left: rect.left + window.scrollX,
+			});
 		}
 
 		document.removeEventListener("mousemove", handleMouseMove);
 	};
+
 
 	// Rotation
 
 	const centerRef = useRef({ x: 0, y: 0 });
 
 	const rotateMouseDown = (e: React.MouseEvent) => {
-		console.log("calling MouseDown");
 		e.stopPropagation();
 
 		if (resizableRef.current) {
@@ -90,7 +137,6 @@ export default function Stamp({
 	};
 
 	const rotateMouseMove = (e: MouseEvent) => {
-		console.log(resizableRef.current?.getBoundingClientRect());
 		const angle = Math.atan2(
 			e.pageY - centerRef.current.y,
 			e.pageX - centerRef.current.x
@@ -102,10 +148,20 @@ export default function Stamp({
 		}
 	};
 
-	const rotateMouseUp = () => {
-		const elRect = resizableRef.current?.getBoundingClientRect();
+	const rotateMouseUp = (e: MouseEvent) => {
+		const angle = Math.atan2(
+			e.pageY - centerRef.current.y,
+			e.pageX - centerRef.current.x
+		);
+		const convertedAngle = ((angle * 180) / Math.PI + 90 + 360) % 360;
+		console.log(convertedAngle);
 
-		console.log(elRect);
+		if (resizableRef.current) {
+			updateStamp({
+				...data,
+				rotate: convertedAngle,
+			});
+		}
 
 		document.removeEventListener("mousemove", rotateMouseMove);
 		document.removeEventListener('mouseup', rotateMouseUp);
@@ -345,6 +401,7 @@ export default function Stamp({
 						left,
 						width,
 						height,
+						transform: `rotate(${rotate}deg)`,
 					}}
 				>
 					<FaRotateRight
@@ -386,6 +443,7 @@ export default function Stamp({
 						left,
 						width,
 						height,
+						transform: `rotate(${rotate}deg)`,
 					}}
 				>
 					<img

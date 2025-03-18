@@ -76,6 +76,7 @@ export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 					url: clone.getAttribute("src") || "",
 					width: 100,
 					height: 100,
+					rotate: 0,
 				};
 
 				handleSetStamps(newStamp);
