@@ -71,8 +71,8 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 			updateStamp({
 				...data,
-				top: coordinates.initialTop,
-				left: coordinates.initialLeft,
+				top: coordinates.initialTop + window.scrollY,
+				left: coordinates.initialLeft + window.scrollX,
 			});
 		} else {
 			console.log("element isn't rotated - updating stamp");

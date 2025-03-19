@@ -97,15 +97,21 @@ function App() {
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
-		console.log(degrees(rotate));
+		
+
+		const radians = (rotate * Math.PI) / 180;
+		const offsetX =
+			(width / 2) * (1 - Math.cos(radians)) - (height / 2) * Math.sin(radians);
+		const offsetY =
+			(height / 2) * (1 - Math.cos(radians)) + (width / 2) * Math.sin(radians);
 
 		if (pdfPageRect) {
 			currentPage.drawImage(pngImage, {
-				x: left - pdfPageRect.left,
-				y: currentPage.getHeight() - (top - 102.4) - width,
+				x: left - pdfPageRect.left + offsetX,
+				y: currentPage.getHeight() - (top - 102.4) - width + offsetY,
 				width,
 				height,
-				rotate: degrees(rotate)
+				rotate: degrees(360 - rotate),
 			});
 		}
 	};
