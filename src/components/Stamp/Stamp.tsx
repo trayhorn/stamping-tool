@@ -136,8 +136,8 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 	};
 
 	useEffect(() => {
-		let x = 0;
 		let y = 0;
+		let ratio = 0;
 		let elWidth = width;
 		let elHeight = height;
 
@@ -151,9 +151,9 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeDown = (e: MouseEvent) => {
 			e.stopPropagation();
+			ratio = width / height;
 
 			y = e.clientY;
-			x = e.clientX;
 
 			document.addEventListener("mousemove", handleResizeMove);
 			document.addEventListener("mouseup", handleResizeUp);
@@ -161,11 +161,9 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeMove = (e: MouseEvent) => {
 			const dy = e.clientY - y;
-			const dx = e.clientX - x;
 			elHeight = elHeight + dy;
-			elWidth = elWidth + dx;
+			elWidth = elWidth + ratio * dy;
 			y = e.clientY;
-			x = e.clientX;
 
 			resizableEl.style.height = elHeight + "px";
 			resizableEl.style.width = elWidth + "px";
@@ -186,12 +184,12 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeDownTopRight = (e: MouseEvent) => {
 			e.stopPropagation();
+			ratio = width / height;
 
 			resizableEl.style.bottom = styles.bottom;
 			resizableEl.style.top = "";
 
 			y = e.clientY;
-			x = e.clientX;
 
 			document.addEventListener("mousemove", handleResizeMoveTopRight);
 			document.addEventListener("mouseup", handleResizeUpTopRight);
@@ -199,12 +197,10 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeMoveTopRight = (e: MouseEvent) => {
 			const dy = e.clientY - y;
-			const dx = e.clientX - x;
 
 			elHeight = elHeight - dy;
-			elWidth = elWidth + dx;
+			elWidth = elWidth - ratio * dy;
 			y = e.clientY;
-			x = e.clientX;
 
 			resizableEl.style.height = elHeight + "px";
 			resizableEl.style.width = elWidth + "px";
@@ -229,6 +225,7 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeDownTopLeft = (e: MouseEvent) => {
 			e.stopPropagation();
+			ratio = width / height;
 
 			resizableEl.style.bottom = styles.bottom;
 			resizableEl.style.right = styles.right;
@@ -236,7 +233,6 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 			resizableEl.style.left = "";
 
 			y = e.clientY;
-			x = e.clientX;
 
 			document.addEventListener("mousemove", handleResizeMoveTopLeft);
 			document.addEventListener("mouseup", handleResizeUpTopLeft);
@@ -244,12 +240,10 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeMoveTopLeft = (e: MouseEvent) => {
 			const dy = e.clientY - y;
-			const dx = e.clientX - x;
 
 			elHeight = elHeight - dy;
-			elWidth = elWidth - dx;
+			elWidth = elWidth - ratio * dy;
 			y = e.clientY;
-			x = e.clientX;
 
 			resizableEl.style.height = elHeight + "px";
 			resizableEl.style.width = elWidth + "px";
@@ -279,12 +273,12 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeDownBottomLeft = (e: MouseEvent) => {
 			e.stopPropagation();
+			ratio = width / height;
 
 			resizableEl.style.right = styles.right;
 			resizableEl.style.left = "";
 
 			y = e.clientY;
-			x = e.clientX;
 
 			document.addEventListener("mousemove", handleResizeMoveBottomLeft);
 			document.addEventListener("mouseup", handleResizeUpBottomLeft);
@@ -292,12 +286,10 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 		const handleResizeMoveBottomLeft = (e: MouseEvent) => {
 			const dy = e.clientY - y;
-			const dx = e.clientX - x;
 
 			elHeight = elHeight + dy;
-			elWidth = elWidth - dx;
+			elWidth = elWidth + ratio * dy;
 			y = e.clientY;
-			x = e.clientX;
 
 			resizableEl.style.height = elHeight + "px";
 			resizableEl.style.width = elWidth + "px";
