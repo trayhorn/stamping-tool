@@ -97,8 +97,6 @@ function App() {
 		const pngImage = await pdfDocRef.current.embedPng(pngImageBytes);
 		const currentPage = pdfDocRef.current.getPages()[pageNumber];
 
-		
-
 		const radians = (rotate * Math.PI) / 180;
 		const offsetX =
 			(width / 2) * (1 - Math.cos(radians)) - (height / 2) * Math.sin(radians);

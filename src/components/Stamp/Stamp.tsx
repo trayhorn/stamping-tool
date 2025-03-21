@@ -15,30 +15,54 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 
 	const [isShowing, setIsShowing] = useState(false);
 
+	// Showing-hiding the box
+
+	const handleClick = (e: React.MouseEvent) => {
+		const el = e.target as HTMLElement;
+		if (
+			!el.classList.contains("stamp") ||
+			initialXRef.current !== startXRef.current ||
+			initialYRef.current !== startYRef.current
+		) {
+			return;
+		}
+		console.log("closing the box");
+		setIsShowing((prev: boolean) => !prev);
+	};
+
 	const resizableRef = useRef<HTMLDivElement | null>(null);
 	const resizeTopLeftRef = useRef<HTMLSpanElement | null>(null);
 	const resizeBottomLeftRef = useRef<HTMLSpanElement | null>(null);
 	const resizeTopRightRef = useRef<HTMLSpanElement | null>(null);
 	const resizeBottomRightRef = useRef<HTMLSpanElement | null>(null);
 
-	let startX = 0;
-	let startY = 0;
+	const startXRef = useRef(0);
+	const startYRef = useRef(0);
+	const initialXRef = useRef(0);
+	const initialYRef = useRef(0);
+
 	let newX = 0;
 	let newY = 0;
 
+	// Dragging
+
 	const handleMouseDown = (e: React.MouseEvent) => {
-		startX = e.clientX;
-		startY = e.clientY;
+		console.log("calling dragdown");
+		startXRef.current = e.clientX;
+		startYRef.current = e.clientY;
+
+		initialXRef.current = e.clientX;
+		initialYRef.current = e.clientY;
 
 		document.addEventListener("mousemove", handleMouseMove);
 	};
 
 	const handleMouseMove = (e: MouseEvent) => {
-		newX = startX - e.clientX;
-		newY = startY - e.clientY;
+		newX = startXRef.current - e.clientX;
+		newY = startYRef.current - e.clientY;
 
-		startX = e.clientX;
-		startY = e.clientY;
+		startXRef.current = e.clientX;
+		startYRef.current = e.clientY;
 
 		if (resizableRef.current) {
 			resizableRef.current.style.top =
@@ -52,8 +76,15 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 		const resizableEl = resizableRef.current;
 		const el = e.target as HTMLElement;
 
+		document.removeEventListener("mousemove", handleMouseMove);
+
 		if (!resizableEl) return;
 		if (el.classList.contains("rotate-btn")) return;
+		if (
+			initialXRef.current === startXRef.current &&
+			initialYRef.current === startYRef.current
+		)
+			return;
 
 		const rect = resizableEl.getBoundingClientRect();
 
@@ -82,8 +113,6 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 				left: rect.left + window.scrollX,
 			});
 		}
-
-		document.removeEventListener("mousemove", handleMouseMove);
 	};
 
 	// Rotation
@@ -125,6 +154,7 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 		console.log(convertedAngle);
 
 		if (resizableRef.current) {
+			console.log("updating stamp in rotateMouseUp");
 			updateStamp({
 				...data,
 				rotate: convertedAngle,
@@ -148,6 +178,8 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 		}
 
 		const styles = window.getComputedStyle(resizableEl);
+
+		// Resize Bottom Right
 
 		const handleResizeDown = (e: MouseEvent) => {
 			e.stopPropagation();
@@ -344,12 +376,7 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 					className="dragable-box"
 					onMouseDown={handleMouseDown}
 					onMouseUp={handleMouseUp}
-					onClick={(e) => {
-						const el = e.target as HTMLElement;
-						if (el.classList.contains("stamp")) {
-							setIsShowing((prev: boolean) => !prev);
-						}
-					}}
+					onClick={handleClick}
 					style={{
 						position: "absolute",
 						top,
@@ -359,16 +386,9 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 						transform: `rotate(${rotate}deg)`,
 					}}
 				>
-					<FaRotateRight
-						className="rotate-btn"
-						onMouseDown={rotateMouseDown}
-						style={{ left: `${width / 2 - 8}px` }}
-					/>
+					<FaRotateRight className="rotate-btn" onMouseDown={rotateMouseDown} />
 
-					<div
-						className="delete-btn_wrapper"
-						onClick={() => onDeleteClick(id)}
-					>
+					<div className="delete-btn_wrapper" onClick={() => onDeleteClick(id)}>
 						<FaRegTrashCan className="delete-btn" />
 					</div>
 
@@ -409,7 +429,6 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 					}}
 				>
 					<img
-						// onDoubleClick={() => onClick(id)}
 						draggable="false"
 						className="stamp clone"
 						src={url}

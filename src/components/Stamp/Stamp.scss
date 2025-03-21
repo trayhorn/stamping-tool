@@ -6,14 +6,17 @@
   cursor: pointer;
 }
 
-
-
 .dragable-box {
   border: 2px solid rgba($color: #2A70C0, $alpha: 0.75);
 
   .rotate-btn {
     position: absolute;
     top: -25px;
+    left: calc(50% - 8px);
+  }
+  .rotate-btn:hover {
+    color: #2A70C0;
+    cursor: pointer;
   }
 
   .delete-btn {
@@ -28,8 +31,8 @@
   }
 }
 
-.dragable-box, 
-.dragable-box img, 
+.dragable-box,
+.dragable-box img,
 .resize-handle {
   user-select: none;
 }
