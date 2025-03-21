@@ -13,19 +13,19 @@ export default function FileForm({ onChange, onDrop }: FileForm) {
 	useEffect(() => {
 		const dropbox = dropboxRef.current;
 
-		function handleDrop(e: DragEvent) {
+		const handleDrop = (e: DragEvent) => {
 			e.preventDefault();
 			if (e.dataTransfer?.files.length) {
 				onDrop(e.dataTransfer.files[0]);
 			}
 		}
 
-		function handleDragOver(e: DragEvent) {
+		const handleDragOver = (e: DragEvent) => {
       e.preventDefault();
       setIsDragging(true);
     }
     
-    function handleDragLeave(e: DragEvent) {
+    const handleDragLeave = (e: DragEvent) => {
       e.preventDefault();
       setIsDragging(false);
 		}

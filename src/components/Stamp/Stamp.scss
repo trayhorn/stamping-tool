@@ -15,7 +15,7 @@
     left: calc(50% - 8px);
   }
   .rotate-btn:hover {
-    color: #2A70C0;
+    color: $primary-accent-color;
     cursor: pointer;
   }
 
@@ -49,6 +49,7 @@
   border-radius: 50%;
   background-color: $primary-accent-color;
 }
+
 
 .top-left {
   top: -4px;
