@@ -25,7 +25,7 @@ export default function FilePreview({
 					return (
 						<Thumbnail
 							key={i}
-							width={205}
+							height={289}
 							className="thumbnail"
 							pageNumber={i + 1}
 							onItemClick={({ pageNumber }) => handleItemClick(pageNumber)}

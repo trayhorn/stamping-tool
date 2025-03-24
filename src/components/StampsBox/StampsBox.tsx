@@ -68,9 +68,6 @@ export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 			const pageRect = pdfPage.getBoundingClientRect();
 			const cloneRect = clone.getBoundingClientRect();
 
-			console.log(pageRect);
-			console.log(cloneRect);
-
 			if (
 				cloneRect.top > pageRect.top &&
 				cloneRect.left > pageRect.left - 25
@@ -129,8 +126,8 @@ export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 						alt="stamp_3"
 					/>
 				</div>
-				<div className="stamp-item add-stamp_container">
-					<FiPlus onClick={openModal} className="add-stamp_icon" size="2rem" />
+				<div className="stamp-item add-stamp_container" onClick={openModal}>
+					<FiPlus className="add-stamp_icon" size="2rem" />
 				</div>
 			</div>
 		</div>

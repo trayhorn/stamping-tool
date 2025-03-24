@@ -1,15 +1,14 @@
-import { ChangeEvent, useState, useRef, useCallback } from "react";
-import "./App.scss";
-import Header from "./components/Header/Header";
+import { ChangeEvent, useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { pdfjs } from "react-pdf";
-import { degrees } from 'pdf-lib';
+import { PDFDocument, degrees } from 'pdf-lib';
+import Header from "./components/Header/Header";
 import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
 import FilePreview from "./components/FilePreview/FilePreview";
 import StampsBox from "./components/StampsBox/StampsBox";
-import { createPortal } from "react-dom";
 import Modal from "./components/Modal/Modal";
-import { PDFDocument } from "pdf-lib";
+import "./App.scss";
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -78,10 +77,6 @@ function App() {
 		});
 	};
 
-	const handleBlobUpdate = useCallback((blob: Blob): void => {
-		setPdfBlob(blob);
-	}, []);
-
 	const embedStamp = async (
 		{ top, left, url, width, height, rotate }: StampType,
 		pageNumber: number
@@ -139,16 +134,23 @@ function App() {
 		}
 	};
 
+	useEffect(() => {
+		async function renderPdf() {
+			if (!file) return;
+			const existingPdfBytes = await file.arrayBuffer();
+			pdfDocRef.current = await PDFDocument.load(existingPdfBytes);
+			const pdfBytes = await pdfDocRef.current.save();
+			const blob = new Blob([pdfBytes], { type: "application/pdf" });
+
+			setPdfBlob(blob);
+		}
+
+		renderPdf();
+	}, [file, pdfDocRef]);
+
 	return (
 		<>
-			{!file && (
-				<FileForm
-					onChange={handleChange}
-					onDrop={(file: File) => setFile(file)}
-				/>
-			)}
-
-			{file && (
+			{file ? (
 				<>
 					<Header
 						file={file}
@@ -164,10 +166,7 @@ function App() {
 							openModal={() => setIsModalShowing(true)}
 						/>
 						<FileView
-							file={file}
 							pdfBlob={pdfBlob}
-							passPdfBlob={handleBlobUpdate}
-							pdfDocRef={pdfDocRef}
 							stamps={stamps}
 							onLoadSuccess={onDocumentLoadSuccess}
 							pageNum={pageNum}
@@ -182,6 +181,11 @@ function App() {
 						/>
 					</main>
 				</>
+			) : (
+				<FileForm
+					onChange={handleChange}
+					onDrop={(file: File) => setFile(file)}
+				/>
 			)}
 			{isModalShowing &&
 				createPortal(
