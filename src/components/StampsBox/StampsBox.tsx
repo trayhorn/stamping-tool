@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import "./StampsBox.scss";
 import { StampType } from "../../App";
 import { FiPlus } from "react-icons/fi";
@@ -10,98 +10,88 @@ type StampsBox = {
 
 export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
+	const cloneRef = useRef<HTMLElement | null>(null);
 
-	useEffect(() => {
-		const container = containerRef.current;
+	const startXRef = useRef(0);
+	const startYRef = useRef(0);
+	const newXRef = useRef(0);
+	const newYRef = useRef(0);
 
-		let startX: number = 0;
-		let startY: number = 0;
-		let newX: number = 0;
-		let newY: number = 0;
+	const handleMouseDown = (e: React.MouseEvent) => {
+		const el = e.target as HTMLElement;
+		if (!el?.classList.contains("stamp")) {
+			return;
+		}
 
-		let clone: HTMLElement | null = null;
+		startXRef.current = e.clientX;
+		startYRef.current = e.clientY;
 
-		const handleMouseDown = (e: MouseEvent) => {
-			const el = e.target as HTMLElement;
-			if (!el?.classList.contains("stamp")) {
-				return;
-			}
+		document.addEventListener("mousemove", handleMouseMove);
+		document.addEventListener("mouseup", handleMouseUp);
 
-			startX = e.clientX;
-			startY = e.clientY;
+		cloneRef.current = el.cloneNode(true) as HTMLElement;
+		cloneRef.current.classList.add("clone");
 
-			document.addEventListener("mousemove", handleMouseMove);
-			document.addEventListener("mouseup", handleMouseUp);
+		if (el.parentElement) {
+			cloneRef.current.style.top = `${el.parentElement.offsetTop}px`;
+			cloneRef.current.style.left = `${el.parentElement.offsetLeft}px`;
+		}
 
-			clone = el.cloneNode(true) as HTMLElement;
-			clone.classList.add("clone");
+		containerRef.current?.appendChild(cloneRef.current);
+	};
 
-			if (el.parentElement) {
-				clone.style.top = `${el.parentElement.offsetTop}px`;
-				clone.style.left = `${el.parentElement.offsetLeft}px`;
-			}
+	const handleMouseMove = (e: MouseEvent) => {
+		if (!cloneRef.current) return;
 
-			container?.appendChild(clone);
-		};
+		newXRef.current = startXRef.current - e.clientX;
+		newYRef.current = startYRef.current - e.clientY;
 
-		const handleMouseMove = (e: MouseEvent) => {
-			if (!clone) return;
+		startXRef.current = e.clientX;
+		startYRef.current = e.clientY;
 
-			newX = startX - e.clientX;
-			newY = startY - e.clientY;
+		cloneRef.current.style.top = `${cloneRef.current.offsetTop - newYRef.current}px`;
+		cloneRef.current.style.left = `${cloneRef.current.offsetLeft - newXRef.current}px`;
+	};
 
-			startX = e.clientX;
-			startY = e.clientY;
+	const handleMouseUp = (e: MouseEvent) => {
+		const pdfPage = document.querySelector(
+			".react-pdf__Page__canvas"
+		) as HTMLCanvasElement | null;
+		const clone = e.target as HTMLElement | null;
 
-			clone.style.top = `${clone.offsetTop - newY}px`;
-			clone.style.left = `${clone.offsetLeft - newX}px`;
-		};
+		if (!pdfPage || !clone) return;
 
-		const handleMouseUp = (e: MouseEvent) => {
-			const pdfPage = document.querySelector(
-				".react-pdf__Page__canvas"
-			) as HTMLCanvasElement | null;
-			const clone = e.target as HTMLElement | null;
+		const pageRect = pdfPage.getBoundingClientRect();
+		const cloneRect = clone.getBoundingClientRect();
 
-			if (!pdfPage || !clone) return;
+		if (cloneRect.top > pageRect.top && cloneRect.left > pageRect.left - 25) {
+			const newStamp = {
+				id: crypto.randomUUID(),
+				top: cloneRect.top + window.scrollY,
+				left: cloneRect.left,
+				url: clone.getAttribute("src") || "",
+				width: 100,
+				height: 100,
+				rotate: 0,
+			};
 
-			const pageRect = pdfPage.getBoundingClientRect();
-			const cloneRect = clone.getBoundingClientRect();
+			handleSetStamps(newStamp);
+		}
 
-			if (
-				cloneRect.top > pageRect.top &&
-				cloneRect.left > pageRect.left - 25
-			) {
-				const newStamp = {
-					id: crypto.randomUUID(),
-					top: cloneRect.top + window.scrollY,
-					left: cloneRect.left,
-					url: clone.getAttribute("src") || "",
-					width: 100,
-					height: 100,
-					rotate: 0,
-				};
+		clone.remove();
 
-				handleSetStamps(newStamp);
-			}
-
-			clone.remove();
-
-			document.removeEventListener("mousemove", handleMouseMove);
-			document.removeEventListener("mouseup", handleMouseUp);
-		};
-
-		container?.addEventListener("mousedown", handleMouseDown);
-
-		return () => {
-			container?.removeEventListener("mousedown", handleMouseDown);
-		};
-	}, [handleSetStamps]);
+		document.removeEventListener("mousemove", handleMouseMove);
+		document.removeEventListener("mouseup", handleMouseUp);
+	};
 
 	return (
 		<div className="sidebar">
 			<h2 className="heading">Stamps</h2>
-			<div className="stamps-list" ref={containerRef}>
+			<div
+				className="stamps-list"
+				ref={containerRef}
+				onMouseDown={handleMouseDown}
+			>
 				<div className="stamp-item">
 					<img
 						draggable="false"

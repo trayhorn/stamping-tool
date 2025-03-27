@@ -1,5 +1,5 @@
 import "./FileForm.scss";
-import { ChangeEvent, useState, useEffect, useRef } from "react";
+import { ChangeEvent, useState } from "react";
 
 type FileForm = {
 	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -8,44 +8,31 @@ type FileForm = {
 
 export default function FileForm({ onChange, onDrop }: FileForm) {
 	const [isDragging, setIsDragging] = useState<boolean>(false);
-	const dropboxRef = useRef<HTMLDivElement | null>(null)
 
-	useEffect(() => {
-		const dropbox = dropboxRef.current;
-
-		const handleDrop = (e: DragEvent) => {
-			e.preventDefault();
-			if (e.dataTransfer?.files.length) {
-				onDrop(e.dataTransfer.files[0]);
-			}
+	const handleDrop = (e: React.DragEvent) => {
+		e.preventDefault();
+		if (e.dataTransfer?.files.length) {
+			onDrop(e.dataTransfer.files[0]);
 		}
+	};
 
-		const handleDragOver = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragging(true);
-    }
-    
-    const handleDragLeave = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-		}
+	const handleDragOver = (e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragging(true);
+	};
 
-    dropbox?.addEventListener("dragover", handleDragOver);
-    dropbox?.addEventListener('dragleave', handleDragLeave);
-		dropbox?.addEventListener("drop", handleDrop);
-
-		return () => {
-      dropbox?.removeEventListener("dragover", handleDragOver);
-      dropbox?.removeEventListener("dragleave", handleDragLeave);
-			dropbox?.removeEventListener("drop", handleDrop);
-		};
-	}, [onDrop]);
+	const handleDragLeave = (e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragging(false);
+	};
 
 	return (
 		<form className="file-form">
 			<div
 				id="dropbox"
-				ref={dropboxRef}
+				onDragOver={handleDragOver}
+				onDragLeave={handleDragLeave}
+				onDrop={handleDrop}
 				style={isDragging ? { borderStyle: "dashed" } : {}}
 			>
 				<p>Drag and drop the file here</p>
