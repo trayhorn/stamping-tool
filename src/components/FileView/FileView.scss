@@ -1,13 +1,19 @@
 .document-section {
   flex: 1;
+  background-color: #F8F9FA;
+
+  .react-pdf__Document,
+  .page {
+    height: 100%;
+  }
 
   .page {
-    background-color: #F8F9FA !important;
+    display: flex;
+    background-color: inherit !important;
   }
 
   .page > [class*="canvas"] { 
-    margin: 0 auto;
-    padding: 50px 0;
+    margin: auto;
     width: auto !important;
   }
 }
