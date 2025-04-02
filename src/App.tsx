@@ -102,12 +102,18 @@ function App() {
 			(width / 2) * (1 - Math.cos(radians)) - (height / 2) * Math.sin(radians);
 		const offsetY =
 			(height / 2) * (1 - Math.cos(radians)) + (width / 2) * Math.sin(radians);
+		
+		console.log(pdfPageRect);
 
 		if (pdfPageRect && docRect) {
+			const canvasTop = Math.max(docRect.top, pdfPageRect.top);
 			currentPage.drawImage(pngImage, {
 				x: left - (pdfPageRect.left - docRect.left) + offsetX,
-				y: (currentPage.getHeight()
-					- (top - (pdfPageRect.top - docRect.top) - 50) - width) + offsetY,
+				y:
+					currentPage.getHeight() -
+					(top - (canvasTop - docRect.top) - 50) -
+					width +
+					offsetY,
 				width,
 				height,
 				rotate: degrees(360 - rotate),
@@ -136,7 +142,7 @@ function App() {
 			setPdfBlob(newBlob);
 
 			setFileUrl(URL.createObjectURL(newBlob));
-			// setStamps({});
+			setStamps({});
 		}
 	};
 

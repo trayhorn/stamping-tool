@@ -99,7 +99,7 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 					<img
 						draggable="false"
 						className="stamp"
-						src="/images/AttachmentDateStamp-55mmx55mm-300dpi.png"
+						src="/public/images/ChamberStamp-55mmx55mm-300dpi.png"
 						alt="stamp_1"
 					/>
 				</div>
@@ -107,7 +107,7 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 					<img
 						draggable="false"
 						className="stamp"
-						src="/images/ChamberStamp-55mmx55mm-300dpi.png"
+						src="/public/images/Notary_55x55canvas300dpi.png"
 						alt="stamp_2"
 					/>
 				</div>
@@ -115,7 +115,7 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 					<img
 						draggable="false"
 						className="stamp"
-						src="/images/Notary_55x55canvas300dpi.png"
+						src="/public/images/AttachmentDateStamp-55mmx55mm-300dpi.png"
 						alt="stamp_3"
 					/>
 				</div>

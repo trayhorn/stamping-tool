@@ -28,7 +28,7 @@ export default function FileView({
 	const handleScroll = (e: React.UIEvent<HTMLElement>) => {
 		const el = e.target as HTMLElement;
 		scrollRef.current = el.scrollTop;
-		console.log(scrollRef.current);
+		// console.log(scrollRef.current);
 	};
 
 	return (
