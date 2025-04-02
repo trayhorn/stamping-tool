@@ -2,6 +2,7 @@
 
 .sidebar-preview {
   overflow: auto;
+  max-height: 100%;
 
   .thumbnail-document {
     padding: $spacing-md;

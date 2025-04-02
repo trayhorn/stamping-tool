@@ -10,9 +10,17 @@ type StampComponentType = {
 	data: StampType;
 	onDeleteClick: (id: string) => void;
 	updateStamp: (updatedStamp: StampType) => void;
+	docSectionRef: React.RefObject<HTMLElement | null>;
+	scrollRef: React.RefObject<number>;
 };
 
-export default function Stamp({ data, onDeleteClick, updateStamp }: StampComponentType) {
+export default function Stamp({
+	data,
+	onDeleteClick,
+	updateStamp,
+	docSectionRef,
+	scrollRef,
+}: StampComponentType) {
 	const { id, top, left, url, width, height, rotate } = data;
 
 	const [isShowing, setIsShowing] = useState(false);
@@ -30,7 +38,7 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 		startYRef,
 		initialXRef,
 		initialYRef,
-	} = useDrag(data, resizableRef, updateStamp);
+	} = useDrag(data, resizableRef, updateStamp, docSectionRef, scrollRef);
 
 	const rotateMouseDown = useRotate(data, resizableRef, updateStamp);
 	useResize(
@@ -40,7 +48,9 @@ export default function Stamp({ data, onDeleteClick, updateStamp }: StampCompone
 		resizeBottomLeftRef,
 		resizeTopRightRef,
 		resizeBottomRightRef,
-		updateStamp
+		updateStamp,
+		docSectionRef,
+		scrollRef
 	);
 
 	const handleClick = (e: React.MouseEvent) => {

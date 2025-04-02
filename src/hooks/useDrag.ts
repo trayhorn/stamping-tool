@@ -6,8 +6,12 @@ import calculateCoordinates from "../components/utils/calculateCoordinates";
 export default function useDrag(
 	data: StampType,
 	ref: React.RefObject<HTMLElement | null>,
-	updateStamp: (stamp: StampType) => void
+	updateStamp: (stamp: StampType) => void,
+	docSectionRef: React.RefObject<HTMLElement | null>,
+	scrollRef: React.RefObject<number>
 ) {
+
+	const docRect = docSectionRef.current?.getBoundingClientRect();
 	const { width, height, rotate } = data;
 
 	const startXRef = useRef(0);
@@ -59,13 +63,15 @@ export default function useDrag(
 
 		const rect = resizableEl.getBoundingClientRect();
 
+		if (!docRect) return;
+
 		if (rotate !== 0) {
 			console.log("element rotated - updating stamp");
 
 			const computedStyle = window.getComputedStyle(resizableEl);
 			const transform = computedStyle.transform;
-			const newTop = rect.top;
-			const newLeft = rect.left;
+			const newTop = rect.top - docRect.top;
+			const newLeft = rect.left - docRect.left;
 
 			const params = { newTop, newLeft, transform, width, height };
 
@@ -73,15 +79,15 @@ export default function useDrag(
 
 			updateStamp({
 				...data,
-				top: coordinates.initialTop + window.scrollY,
-				left: coordinates.initialLeft + window.scrollX,
+				top: coordinates.initialTop + scrollRef.current,
+				left: coordinates.initialLeft,
 			});
 		} else {
 			console.log("element isn't rotated - updating stamp");
 			updateStamp({
 				...data,
-				top: rect.top + window.scrollY,
-				left: rect.left + window.scrollX,
+				top: rect.top - docRect.top + scrollRef.current,
+				left: rect.left - docRect.left,
 			});
 		}
 	};

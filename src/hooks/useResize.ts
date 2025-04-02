@@ -2,216 +2,221 @@ import { useEffect } from "react";
 import { StampType } from "../App";
 
 export default function useResize(
-  data: StampType,
-  ref: React.RefObject<HTMLElement | null>,
-  resizeTopLeftRef: React.RefObject<HTMLElement | null>,
-  resizeBottomLeftRef: React.RefObject<HTMLElement | null>,
-  resizeTopRightRef: React.RefObject<HTMLElement | null>,
-  resizeBottomRightRef: React.RefObject<HTMLElement | null>,
-  updateStamp: (stamp: StampType) => void
+	data: StampType,
+	ref: React.RefObject<HTMLElement | null>,
+	resizeTopLeftRef: React.RefObject<HTMLElement | null>,
+	resizeBottomLeftRef: React.RefObject<HTMLElement | null>,
+	resizeTopRightRef: React.RefObject<HTMLElement | null>,
+	resizeBottomRightRef: React.RefObject<HTMLElement | null>,
+	updateStamp: (stamp: StampType) => void,
+	docSectionRef: React.RefObject<HTMLElement | null>,
+	scrollRef: React.RefObject<number>
 ) {
-  const { width, height } = data;
+	const { width, height } = data;
 
-  useEffect(() => {
-    let y = 0;
-    let ratio = 0;
-    let elWidth = width;
-    let elHeight = height;
+	useEffect(() => {
+		let y = 0;
+		let ratio = 0;
+		let elWidth = width;
+		let elHeight = height;
 
-    const resizableEl = ref.current;
+		const resizableEl = ref.current;
 
-    if (!resizableEl) {
-      return;
-    }
+		const docRect = docSectionRef.current?.getBoundingClientRect();
 
-    const styles = window.getComputedStyle(resizableEl);
+		if (!resizableEl || !docRect) return;
 
-    // Resize Bottom Right
+		const styles = window.getComputedStyle(resizableEl);
 
-    const handleResizeDown = (e: MouseEvent) => {
-      e.stopPropagation();
-      ratio = width / height;
+		// Resize Bottom Right
 
-      y = e.clientY;
+		const handleResizeDown = (e: MouseEvent) => {
+			e.stopPropagation();
+			ratio = width / height;
 
-      document.addEventListener("mousemove", handleResizeMove);
-      document.addEventListener("mouseup", handleResizeUp);
-    };
+			y = e.clientY;
 
-    const handleResizeMove = (e: MouseEvent) => {
-      const dy = e.clientY - y;
-      elHeight = elHeight + dy;
-      elWidth = elWidth + ratio * dy;
-      y = e.clientY;
+			document.addEventListener("mousemove", handleResizeMove);
+			document.addEventListener("mouseup", handleResizeUp);
+		};
 
-      resizableEl.style.height = elHeight + "px";
-      resizableEl.style.width = elWidth + "px";
-    };
+		const handleResizeMove = (e: MouseEvent) => {
+			const dy = e.clientY - y;
+			elHeight = elHeight + dy;
+			elWidth = elWidth + ratio * dy;
+			y = e.clientY;
 
-    const handleResizeUp = () => {
-      updateStamp({
-        ...data,
-        width: elWidth,
-        height: elHeight,
-      });
+			resizableEl.style.height = elHeight + "px";
+			resizableEl.style.width = elWidth + "px";
+		};
 
-      document.removeEventListener("mousemove", handleResizeMove);
-      document.removeEventListener("mouseup", handleResizeUp);
-    };
+		const handleResizeUp = () => {
+			updateStamp({
+				...data,
+				width: elWidth,
+				height: elHeight,
+			});
 
-    // Resize Top Right
+			document.removeEventListener("mousemove", handleResizeMove);
+			document.removeEventListener("mouseup", handleResizeUp);
+		};
 
-    const handleResizeDownTopRight = (e: MouseEvent) => {
-      e.stopPropagation();
-      ratio = width / height;
+		// Resize Top Right
 
-      resizableEl.style.bottom = styles.bottom;
-      resizableEl.style.top = "";
+		const handleResizeDownTopRight = (e: MouseEvent) => {
+			e.stopPropagation();
+			ratio = width / height;
 
-      y = e.clientY;
+			resizableEl.style.bottom = styles.bottom;
+			resizableEl.style.top = "";
 
-      document.addEventListener("mousemove", handleResizeMoveTopRight);
-      document.addEventListener("mouseup", handleResizeUpTopRight);
-    };
+			y = e.clientY;
 
-    const handleResizeMoveTopRight = (e: MouseEvent) => {
-      const dy = e.clientY - y;
+			document.addEventListener("mousemove", handleResizeMoveTopRight);
+			document.addEventListener("mouseup", handleResizeUpTopRight);
+		};
 
-      elHeight = elHeight - dy;
-      elWidth = elWidth - ratio * dy;
-      y = e.clientY;
+		const handleResizeMoveTopRight = (e: MouseEvent) => {
+			const dy = e.clientY - y;
 
-      resizableEl.style.height = elHeight + "px";
-      resizableEl.style.width = elWidth + "px";
-    };
+			elHeight = elHeight - dy;
+			elWidth = elWidth - ratio * dy;
+			y = e.clientY;
 
-    const handleResizeUpTopRight = () => {
-      resizableEl.style.top = styles.top;
-      resizableEl.style.bottom = "";
+			resizableEl.style.height = elHeight + "px";
+			resizableEl.style.width = elWidth + "px";
+		};
 
-      updateStamp({
-        ...data,
-        top: resizableEl.getBoundingClientRect().top + window.scrollY,
-        width: elWidth,
-        height: elHeight,
-      });
+		const handleResizeUpTopRight = () => {
+			resizableEl.style.top = styles.top;
+			resizableEl.style.bottom = "";
 
-      document.removeEventListener("mousemove", handleResizeMoveTopRight);
-      document.removeEventListener("mouseup", handleResizeUpTopRight);
-    };
+			updateStamp({
+				...data,
+				top:
+					resizableEl.getBoundingClientRect().top -
+					docRect.top +
+					scrollRef.current,
+				width: elWidth,
+				height: elHeight,
+			});
 
-    // Resize Top Left
+			document.removeEventListener("mousemove", handleResizeMoveTopRight);
+			document.removeEventListener("mouseup", handleResizeUpTopRight);
+		};
 
-    const handleResizeDownTopLeft = (e: MouseEvent) => {
-      e.stopPropagation();
-      ratio = width / height;
+		// Resize Top Left
 
-      resizableEl.style.bottom = styles.bottom;
-      resizableEl.style.right = styles.right;
-      resizableEl.style.top = "";
-      resizableEl.style.left = "";
+		const handleResizeDownTopLeft = (e: MouseEvent) => {
+			e.stopPropagation();
+			ratio = width / height;
 
-      y = e.clientY;
+			resizableEl.style.bottom = styles.bottom;
+			resizableEl.style.right = styles.right;
+			resizableEl.style.top = "";
+			resizableEl.style.left = "";
 
-      document.addEventListener("mousemove", handleResizeMoveTopLeft);
-      document.addEventListener("mouseup", handleResizeUpTopLeft);
-    };
+			y = e.clientY;
 
-    const handleResizeMoveTopLeft = (e: MouseEvent) => {
-      const dy = e.clientY - y;
+			document.addEventListener("mousemove", handleResizeMoveTopLeft);
+			document.addEventListener("mouseup", handleResizeUpTopLeft);
+		};
 
-      elHeight = elHeight - dy;
-      elWidth = elWidth - ratio * dy;
-      y = e.clientY;
+		const handleResizeMoveTopLeft = (e: MouseEvent) => {
+			const dy = e.clientY - y;
 
-      resizableEl.style.height = elHeight + "px";
-      resizableEl.style.width = elWidth + "px";
-    };
+			elHeight = elHeight - dy;
+			elWidth = elWidth - ratio * dy;
+			y = e.clientY;
 
-    const handleResizeUpTopLeft = () => {
-      resizableEl.style.top = styles.top;
-      resizableEl.style.left = styles.left;
-      resizableEl.style.bottom = "";
-      resizableEl.style.right = "";
+			resizableEl.style.height = elHeight + "px";
+			resizableEl.style.width = elWidth + "px";
+		};
 
-      const elRect = resizableEl.getBoundingClientRect();
+		const handleResizeUpTopLeft = () => {
+			resizableEl.style.top = styles.top;
+			resizableEl.style.left = styles.left;
+			resizableEl.style.bottom = "";
+			resizableEl.style.right = "";
 
-      updateStamp({
-        ...data,
-        top: elRect.top + window.scrollY,
-        left: elRect.left,
-        width: elWidth,
-        height: elHeight,
-      });
+			const elRect = resizableEl.getBoundingClientRect();
 
-      document.removeEventListener("mousemove", handleResizeMoveTopLeft);
-      document.removeEventListener("mouseup", handleResizeUpTopLeft);
-    };
+			updateStamp({
+				...data,
+				top: elRect.top - docRect.top + scrollRef.current,
+				left: elRect.left - docRect.left,
+				width: elWidth,
+				height: elHeight,
+			});
 
-    // Resize Bottom Left
+			document.removeEventListener("mousemove", handleResizeMoveTopLeft);
+			document.removeEventListener("mouseup", handleResizeUpTopLeft);
+		};
 
-    const handleResizeDownBottomLeft = (e: MouseEvent) => {
-      e.stopPropagation();
-      ratio = width / height;
+		// Resize Bottom Left
 
-      resizableEl.style.right = styles.right;
-      resizableEl.style.left = "";
+		const handleResizeDownBottomLeft = (e: MouseEvent) => {
+			e.stopPropagation();
+			ratio = width / height;
 
-      y = e.clientY;
+			resizableEl.style.right = styles.right;
+			resizableEl.style.left = "";
 
-      document.addEventListener("mousemove", handleResizeMoveBottomLeft);
-      document.addEventListener("mouseup", handleResizeUpBottomLeft);
-    };
+			y = e.clientY;
 
-    const handleResizeMoveBottomLeft = (e: MouseEvent) => {
-      const dy = e.clientY - y;
+			document.addEventListener("mousemove", handleResizeMoveBottomLeft);
+			document.addEventListener("mouseup", handleResizeUpBottomLeft);
+		};
 
-      elHeight = elHeight + dy;
-      elWidth = elWidth + ratio * dy;
-      y = e.clientY;
+		const handleResizeMoveBottomLeft = (e: MouseEvent) => {
+			const dy = e.clientY - y;
 
-      resizableEl.style.height = elHeight + "px";
-      resizableEl.style.width = elWidth + "px";
-    };
+			elHeight = elHeight + dy;
+			elWidth = elWidth + ratio * dy;
+			y = e.clientY;
 
-    const handleResizeUpBottomLeft = () => {
-      resizableEl.style.left = styles.left;
-      resizableEl.style.right = "";
+			resizableEl.style.height = elHeight + "px";
+			resizableEl.style.width = elWidth + "px";
+		};
 
-      const elRect = resizableEl.getBoundingClientRect();
+		const handleResizeUpBottomLeft = () => {
+			resizableEl.style.left = styles.left;
+			resizableEl.style.right = "";
 
-      updateStamp({
-        ...data,
-        left: elRect.left,
-        width: elWidth,
-        height: elHeight,
-      });
+			const elRect = resizableEl.getBoundingClientRect();
 
-      document.removeEventListener("mousemove", handleResizeMoveBottomLeft);
-      document.removeEventListener("mouseup", handleResizeUpBottomLeft);
-    };
+			updateStamp({
+				...data,
+				left: elRect.left - docRect.left,
+				width: elWidth,
+				height: elHeight,
+			});
 
-    const bottomRightHandle = resizeBottomRightRef.current;
-    const topRightHandle = resizeTopRightRef.current;
-    const topLeftHandle = resizeTopLeftRef.current;
-    const bottomLeftHandle = resizeBottomLeftRef.current;
+			document.removeEventListener("mousemove", handleResizeMoveBottomLeft);
+			document.removeEventListener("mouseup", handleResizeUpBottomLeft);
+		};
 
-    bottomRightHandle?.addEventListener("mousedown", handleResizeDown);
-    topRightHandle?.addEventListener("mousedown", handleResizeDownTopRight);
-    topLeftHandle?.addEventListener("mousedown", handleResizeDownTopLeft);
-    bottomLeftHandle?.addEventListener("mousedown", handleResizeDownBottomLeft);
+		const bottomRightHandle = resizeBottomRightRef.current;
+		const topRightHandle = resizeTopRightRef.current;
+		const topLeftHandle = resizeTopLeftRef.current;
+		const bottomLeftHandle = resizeBottomLeftRef.current;
 
-    return () => {
-      bottomRightHandle?.removeEventListener("mousedown", handleResizeDown);
-      topRightHandle?.removeEventListener(
-        "mousedown",
-        handleResizeDownTopRight
-      );
-      topLeftHandle?.removeEventListener("mousedown", handleResizeDownTopLeft);
-      bottomLeftHandle?.removeEventListener(
-        "mousedown",
-        handleResizeDownBottomLeft
-      );
-    };
-  });
+		bottomRightHandle?.addEventListener("mousedown", handleResizeDown);
+		topRightHandle?.addEventListener("mousedown", handleResizeDownTopRight);
+		topLeftHandle?.addEventListener("mousedown", handleResizeDownTopLeft);
+		bottomLeftHandle?.addEventListener("mousedown", handleResizeDownBottomLeft);
+
+		return () => {
+			bottomRightHandle?.removeEventListener("mousedown", handleResizeDown);
+			topRightHandle?.removeEventListener(
+				"mousedown",
+				handleResizeDownTopRight
+			);
+			topLeftHandle?.removeEventListener("mousedown", handleResizeDownTopLeft);
+			bottomLeftHandle?.removeEventListener(
+				"mousedown",
+				handleResizeDownBottomLeft
+			);
+		};
+	});
 }

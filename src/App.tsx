@@ -37,6 +37,7 @@ function App() {
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 
 	const pdfDocRef = useRef<PDFDocument | null>(null);
+	const scrollRef = useRef<number>(0);
 
 	function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
 		setNumPages(numPages);
@@ -83,6 +84,10 @@ function App() {
 	) => {
 		if (!pdfDocRef.current) return;
 
+		const docRect = document
+			.querySelector('.document-section')
+			?.getBoundingClientRect();
+
 		const pdfPageRect = document
 			.querySelector(".react-pdf__Page__canvas")
 			?.getBoundingClientRect();
@@ -98,10 +103,11 @@ function App() {
 		const offsetY =
 			(height / 2) * (1 - Math.cos(radians)) + (width / 2) * Math.sin(radians);
 
-		if (pdfPageRect) {
+		if (pdfPageRect && docRect) {
 			currentPage.drawImage(pngImage, {
-				x: left - pdfPageRect.left + offsetX,
-				y: currentPage.getHeight() - (top - 102.4) - width + offsetY,
+				x: left - (pdfPageRect.left - docRect.left) + offsetX,
+				y: (currentPage.getHeight()
+					- (top - (pdfPageRect.top - docRect.top) - 50) - width) + offsetY,
 				width,
 				height,
 				rotate: degrees(360 - rotate),
@@ -130,7 +136,7 @@ function App() {
 			setPdfBlob(newBlob);
 
 			setFileUrl(URL.createObjectURL(newBlob));
-			setStamps({});
+			// setStamps({});
 		}
 	};
 
@@ -164,6 +170,7 @@ function App() {
 						<StampsBox
 							handleSetStamps={handleSetStamps}
 							openModal={() => setIsModalShowing(true)}
+							scrollRef={scrollRef}
 						/>
 						<FileView
 							pdfBlob={pdfBlob}
@@ -172,6 +179,7 @@ function App() {
 							pageNum={pageNum}
 							deleteStamp={deleteStamp}
 							updateStamp={updateStamp}
+							scrollRef={scrollRef}
 						/>
 						<FilePreview
 							file={file}

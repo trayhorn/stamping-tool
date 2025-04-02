@@ -1,13 +1,16 @@
 @use "./variables" as *;
 
+
 #root {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
 }
 
 main {
-  display: grid;
-  grid-template-columns: min-content 1fr min-content;
-  height: calc(100% - 52.4px);
+  flex-grow: 1;
+  display: flex;
+  overflow: hidden;
 }
 
 .sidebar {

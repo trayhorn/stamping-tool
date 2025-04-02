@@ -6,9 +6,10 @@ import { FiPlus } from "react-icons/fi";
 type StampsBox = {
 	handleSetStamps: (newStamp: StampType) => void;
 	openModal: () => void;
+	scrollRef: React.RefObject<number>;
 };
 
-export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
+export default function StampsBox({ handleSetStamps, openModal, scrollRef }: StampsBox) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const cloneRef = useRef<HTMLElement | null>(null);
 
@@ -54,21 +55,23 @@ export default function StampsBox({ handleSetStamps, openModal }: StampsBox) {
 	};
 
 	const handleMouseUp = (e: MouseEvent) => {
+		const documentPage = document.querySelector('.document-section');
 		const pdfPage = document.querySelector(
 			".react-pdf__Page__canvas"
 		) as HTMLCanvasElement | null;
 		const clone = e.target as HTMLElement | null;
 
-		if (!pdfPage || !clone) return;
+		if (!pdfPage || !clone || !documentPage) return;
 
+		const docRect = documentPage?.getBoundingClientRect();
 		const pageRect = pdfPage.getBoundingClientRect();
 		const cloneRect = clone.getBoundingClientRect();
 
 		if (cloneRect.top > pageRect.top && cloneRect.left > pageRect.left - 25) {
 			const newStamp = {
 				id: crypto.randomUUID(),
-				top: cloneRect.top + window.scrollY,
-				left: cloneRect.left,
+				top: cloneRect.top - docRect.top + scrollRef.current,
+				left: cloneRect.left - docRect.left,
 				url: clone.getAttribute("src") || "",
 				width: 100,
 				height: 100,

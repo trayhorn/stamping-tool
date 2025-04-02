@@ -2,6 +2,7 @@ import "./FileView.scss";
 import { Document, Page } from "react-pdf";
 import Stamp from "../Stamp/Stamp";
 import { StampType } from "../../App";
+import { useRef } from "react";
 
 type FileView = {
 	pdfBlob: Blob | null;
@@ -10,6 +11,7 @@ type FileView = {
 	pageNum: number;
 	deleteStamp: (id: string) => void;
 	updateStamp: (updatedStamp: StampType) => void;
+	scrollRef: React.RefObject<number>
 };
 
 export default function FileView({
@@ -19,10 +21,22 @@ export default function FileView({
 	pageNum,
 	deleteStamp,
 	updateStamp,
+	scrollRef,
 }: FileView) {
+	const docSectionRef = useRef<HTMLElement | null>(null);
+
+	const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+		const el = e.target as HTMLElement;
+		scrollRef.current = el.scrollTop;
+		console.log(scrollRef.current);
+	};
 
 	return (
-		<section className="document-section">
+		<section
+			ref={docSectionRef}
+			className="document-section"
+			onScroll={handleScroll}
+		>
 			<Document file={pdfBlob} onLoadSuccess={onLoadSuccess}>
 				<Page
 					className="page"
@@ -39,6 +53,8 @@ export default function FileView({
 								data={el}
 								onDeleteClick={deleteStamp}
 								updateStamp={updateStamp}
+								docSectionRef={docSectionRef}
+								scrollRef={scrollRef}
 							/>
 						);
 					})}
