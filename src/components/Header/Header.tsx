@@ -6,6 +6,7 @@ type Header = {
 	urlToDownload: string;
 	clearFile: () => void;
 	clearFileUrl: () => void;
+	clearStamps: () => void;
 	saveDocument: () => void;
 };
 
@@ -14,11 +15,13 @@ export default function Header({
 	urlToDownload,
 	clearFile,
 	clearFileUrl,
+	clearStamps,
 	saveDocument,
 }: Header) {
 	const handleClick = () => {
 		clearFileUrl();
 		clearFile();
+		clearStamps();
 	};
 
 	const fileName = file.name.slice(0, file.name.length - 4) + "-edited.pdf";

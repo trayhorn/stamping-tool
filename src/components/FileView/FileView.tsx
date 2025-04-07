@@ -40,7 +40,7 @@ export default function FileView({
 			<Document file={pdfBlob} onLoadSuccess={onLoadSuccess}>
 				<Page
 					className="page"
-					height={942}
+					height={1042}
 					renderTextLayer={false}
 					renderAnnotationLayer={false}
 					pageNumber={pageNum}

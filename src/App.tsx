@@ -84,11 +84,13 @@ function App() {
 	) => {
 		if (!pdfDocRef.current) return;
 
+		const canvasScale = 1.1187648456057007;
+
 		const docRect = document
 			.querySelector('.document-section')
 			?.getBoundingClientRect();
 
-		const pdfPageRect = document
+		const canvasRect = document
 			.querySelector(".react-pdf__Page__canvas")
 			?.getBoundingClientRect();
 
@@ -102,20 +104,16 @@ function App() {
 			(width / 2) * (1 - Math.cos(radians)) - (height / 2) * Math.sin(radians);
 		const offsetY =
 			(height / 2) * (1 - Math.cos(radians)) + (width / 2) * Math.sin(radians);
-		
-		console.log(pdfPageRect);
 
-		if (pdfPageRect && docRect) {
-			const canvasTop = Math.max(docRect.top, pdfPageRect.top);
+		if (canvasRect && docRect) {
+			const canvasTop = Math.max(docRect.top, canvasRect.top);
 			currentPage.drawImage(pngImage, {
-				x: left - (pdfPageRect.left - docRect.left) + offsetX,
-				y:
-					currentPage.getHeight() -
-					(top - (canvasTop - docRect.top) - 50) -
-					width +
-					offsetY,
-				width,
-				height,
+				x: (left - (canvasRect.left - docRect.left) + offsetX) / canvasScale,
+				y: (currentPage.getHeight() -
+						(top - (canvasTop - docRect.top) - 150) -
+						height + offsetY) / canvasScale,
+				width: width / canvasScale,
+				height: height / canvasScale,
 				rotate: degrees(360 - rotate),
 			});
 		}
@@ -169,6 +167,7 @@ function App() {
 						urlToDownload={fileUrl}
 						clearFile={() => setFile(null)}
 						clearFileUrl={() => setFileUrl("")}
+						clearStamps={() => setStamps({})}
 						saveDocument={saveDocument}
 					/>
 
