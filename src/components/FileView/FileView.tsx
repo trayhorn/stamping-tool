@@ -3,6 +3,7 @@ import { Document, Page } from "react-pdf";
 import Stamp from "../Stamp/Stamp";
 import { StampType } from "../../App";
 import { useRef } from "react";
+import Loader from "../utils/Loader/Loader";
 
 type FileView = {
 	pdfBlob: Blob | null;
@@ -28,7 +29,6 @@ export default function FileView({
 	const handleScroll = (e: React.UIEvent<HTMLElement>) => {
 		const el = e.target as HTMLElement;
 		scrollRef.current = el.scrollTop;
-		// console.log(scrollRef.current);
 	};
 
 	return (
@@ -37,13 +37,18 @@ export default function FileView({
 			className="document-section"
 			onScroll={handleScroll}
 		>
-			<Document file={pdfBlob} onLoadSuccess={onLoadSuccess}>
+			<Document
+				file={pdfBlob}
+				onLoadSuccess={onLoadSuccess}
+				loading={<Loader />}
+			>
 				<Page
 					className="page"
 					height={1042}
 					renderTextLayer={false}
 					renderAnnotationLayer={false}
 					pageNumber={pageNum}
+					loading={<Loader />}
 				/>
 				{stamps[pageNum] &&
 					stamps[pageNum].map((el, i) => {

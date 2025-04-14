@@ -188,7 +188,6 @@ function App() {
 						/>
 						<FilePreview
 							file={file}
-							onLoadSuccess={onDocumentLoadSuccess}
 							numPages={numPages}
 							handleItemClick={(num) => setPageNum(num)}
 						/>

@@ -3,7 +3,6 @@ import { Document, Thumbnail } from "react-pdf";
 
 type FilePreview = {
 	file: File;
-	onLoadSuccess: ({ numPages }: { numPages: number }) => void;
 	numPages: number | undefined;
 	handleItemClick: (num: number) => void;
 };
