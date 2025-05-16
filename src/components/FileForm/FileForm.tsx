@@ -1,5 +1,6 @@
 import "./FileForm.scss";
 import { ChangeEvent, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 type FileForm = {
 	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -11,7 +12,14 @@ export default function FileForm({ onChange, onDrop }: FileForm) {
 
 	const handleDrop = (e: React.DragEvent) => {
 		e.preventDefault();
-		if (e.dataTransfer?.files.length) {
+
+		if (!e.dataTransfer?.files.length) return;
+		const file = e.dataTransfer.files[0];
+
+		if (file.type !== "application/pdf") {
+			toast.error("Please upload PDF file");
+			setIsDragging(false);
+		} else {
 			onDrop(e.dataTransfer.files[0]);
 		}
 	};
@@ -40,6 +48,7 @@ export default function FileForm({ onChange, onDrop }: FileForm) {
 				<label htmlFor="id-1">attach the PDF</label>
 				<input type="file" name="fileInput" id="id-1" onChange={onChange} />
 			</div>
+			<ToastContainer />
 		</form>
 	);
 }

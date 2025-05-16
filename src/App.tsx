@@ -198,7 +198,7 @@ function App() {
 					onChange={handleChange}
 					onDrop={(file: File) => setFile(file)}
 				/>
-			)}
+			 )}
 			{isModalShowing &&
 				createPortal(
 					<Modal closeModal={() => setIsModalShowing(false)} />,

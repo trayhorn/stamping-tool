@@ -62,7 +62,6 @@ export default function Stamp({
 		) {
 			return;
 		}
-		console.log("closing the box");
 		setIsShowing((prev: boolean) => !prev);
 	};
 

@@ -55,26 +55,43 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 	};
 
 	const handleMouseUp = (e: MouseEvent) => {
-		const documentPage = document.querySelector('.document-section');
-		const pdfPage = document.querySelector(
+		const documentPage = document.querySelector(".document-section");
+		const canvasEl = document.querySelector(
 			".react-pdf__Page__canvas"
 		) as HTMLCanvasElement | null;
 		const clone = e.target as HTMLElement | null;
 
-		if (!pdfPage || !clone || !documentPage) return;
+		if (!canvasEl || !clone || !documentPage) return;
 
 		const docRect = documentPage?.getBoundingClientRect();
-		const pageRect = pdfPage.getBoundingClientRect();
+		const pageRect = canvasEl.getBoundingClientRect();
 		const cloneRect = clone.getBoundingClientRect();
+		console.log(cloneRect);
 
-		if (cloneRect.top > pageRect.top && cloneRect.left > pageRect.left - 25) {
+		function checkTargetInsideDropBox(
+			dropboxRect: DOMRect,
+			targetRect: DOMRect
+		) {
+			if (
+				targetRect.top > dropboxRect.top &&
+				targetRect.bottom < dropboxRect.bottom &&
+				targetRect.left > dropboxRect.left - targetRect.width * 0.9 &&
+				targetRect.left < dropboxRect.right
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		if (checkTargetInsideDropBox(pageRect, cloneRect)) {
 			const newStamp = {
 				id: crypto.randomUUID(),
 				top: cloneRect.top - docRect.top + scrollRef.current,
 				left: cloneRect.left - docRect.left,
 				url: clone.getAttribute("src") || "",
-				width: 100,
-				height: 100,
+				width: cloneRect.width,
+				height: cloneRect.height,
 				rotate: 0,
 			};
 

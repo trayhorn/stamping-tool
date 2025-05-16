@@ -1,10 +1,11 @@
 import "./Modal.scss";
 import { useState, useEffect } from "react";
+import { IoCloseCircleOutline } from "react-icons/io5";
+
 
 type Modal = {
   closeModal: () => void;
 }
-
 
 export default function Modal({ closeModal }: Modal) {
 	const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -16,8 +17,7 @@ export default function Modal({ closeModal }: Modal) {
 		function handleDrop(e: DragEvent) {
 			e.preventDefault();
 			if (e.dataTransfer?.files.length) {
-				console.log(e.dataTransfer);
-				// onDrop(e.dataTransfer.files[0]);
+				console.log(e.dataTransfer.files[0]);
 			}
 		}
 
@@ -62,7 +62,9 @@ export default function Modal({ closeModal }: Modal) {
 							/>
 						</div>
 					</form>
-					<button onClick={closeModal}>Close</button>
+					<button onClick={closeModal} className="closeBtn">
+						<IoCloseCircleOutline size={30} className="closeIcon" />
+					</button>
 				</div>
 			</div>
 		</>
