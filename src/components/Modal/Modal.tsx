@@ -1,5 +1,5 @@
 import "./Modal.scss";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 
 
@@ -7,8 +7,33 @@ type Modal = {
   closeModal: () => void;
 }
 
+const BASE_URL = "http://localhost:3000";
+
 export default function Modal({ closeModal }: Modal) {
 	const [isDragging, setIsDragging] = useState<boolean>(false);
+
+
+	const handleChange = (e: ChangeEvent) => {
+		const inputEl = e.target as HTMLInputElement;
+		const file = inputEl.files?.[0];
+
+		if (!file) return;
+
+		const formData = new FormData();
+		formData.append("stamp", file);
+
+		fetch(`${BASE_URL}/stamp/upload`, {
+			method: "POST",
+			body: formData,
+		})
+			.then((res) => res.json())
+			.then((res) => {
+				console.log(res);
+			})
+			.catch((e) => console.log(e));
+		
+		closeModal();
+	}
 
 	useEffect(() => {
 		console.log("calling effect");
@@ -58,7 +83,7 @@ export default function Modal({ closeModal }: Modal) {
 								type="file"
 								name="fileInput"
 								id="id-1"
-								onChange={(e) => console.dir(e.target)}
+								onChange={handleChange}
 							/>
 						</div>
 					</form>
