@@ -35,6 +35,7 @@ function App() {
 	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
 	const [isModalShowing, setIsModalShowing] = useState(false);
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+	const [stampsImgs, setStampsImgs] = useState<{_id: string, stamp: string}[]>([]);
 
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 	const scrollRef = useRef<number>(0);
@@ -76,6 +77,10 @@ function App() {
 				),
 			};
 		});
+	};
+
+	const handleAddStampImage = (newStamp: { _id: string; stamp: string }) => {
+		setStampsImgs((prev) => [...prev, newStamp]);
 	};
 
 	const embedStamp = async (
@@ -155,6 +160,11 @@ function App() {
 			setPdfBlob(blob);
 		}
 
+		fetch("https://stamping-tool-backend.onrender.com/stamps")
+			.then((res) => res.json())
+			.then((result) => setStampsImgs(result))
+			.catch((error) => console.log(error));
+
 		renderPdf();
 	}, [file, pdfDocRef]);
 
@@ -173,6 +183,7 @@ function App() {
 
 					<main>
 						<StampsBox
+							stampsImgs={stampsImgs}
 							handleSetStamps={handleSetStamps}
 							openModal={() => setIsModalShowing(true)}
 							scrollRef={scrollRef}
@@ -198,10 +209,13 @@ function App() {
 					onChange={handleChange}
 					onDrop={(file: File) => setFile(file)}
 				/>
-			 )}
+			)}
 			{isModalShowing &&
 				createPortal(
-					<Modal closeModal={() => setIsModalShowing(false)} />,
+					<Modal
+						closeModal={() => setIsModalShowing(false)}
+						addStampImage={handleAddStampImage}
+					/>,
 					document.body
 				)}
 		</>

@@ -23,6 +23,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 100px;
+    min-height: 100px;
 
     &:hover {
       border-color: $primary-accent-color;

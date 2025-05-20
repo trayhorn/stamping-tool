@@ -1,24 +1,20 @@
 import "./Modal.scss";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { nanoid } from "nanoid";
 
 
 type Modal = {
-  closeModal: () => void;
-}
+	closeModal: () => void;
+	addStampImage: (newStamp: {_id: string, stamp: string}) => void;
+};
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://stamping-tool-backend.onrender.com";
 
-export default function Modal({ closeModal }: Modal) {
+export default function Modal({ addStampImage, closeModal }: Modal) {
 	const [isDragging, setIsDragging] = useState<boolean>(false);
 
-
-	const handleChange = (e: ChangeEvent) => {
-		const inputEl = e.target as HTMLInputElement;
-		const file = inputEl.files?.[0];
-
-		if (!file) return;
-
+	const uploadImage = (file: File) => {
 		const formData = new FormData();
 		formData.append("stamp", file);
 
@@ -27,45 +23,53 @@ export default function Modal({ closeModal }: Modal) {
 			body: formData,
 		})
 			.then((res) => res.json())
-			.then((res) => {
-				console.log(res);
+			.then(({ originalname }) => {
+				addStampImage({_id: nanoid(), stamp: originalname});
 			})
 			.catch((e) => console.log(e));
-		
-		closeModal();
 	}
 
-	useEffect(() => {
-		console.log("calling effect");
-		const dropboxEl = document.getElementById("dropbox");
+	const handleChange = (e: ChangeEvent) => {
+		const inputEl = e.target as HTMLInputElement;
+		const file = inputEl.files?.[0];
 
-		function handleDrop(e: DragEvent) {
-			e.preventDefault();
-			if (e.dataTransfer?.files.length) {
-				console.log(e.dataTransfer.files[0]);
-			}
+		if (!file) return;
+		console.log(file);
+
+		if (file.type !== "image/png") {
+			alert("Supported image type if PNG");
+			return;
 		}
 
-		function handleDragOver(e: DragEvent) {
-			e.preventDefault();
-			setIsDragging(true);
-		}
+		uploadImage(file);
+		closeModal();
+	};
 
-		function handleDragLeave(e: DragEvent) {
-			e.preventDefault();
+	const handleDrop = (e: React.DragEvent) => {
+		e.preventDefault();
+
+		if (!e.dataTransfer?.files.length) return;
+		const file = e.dataTransfer.files[0];
+
+		if (file.type !== "image/png") {
+			alert("Please upload PNG file");
 			setIsDragging(false);
+			return;
 		}
 
-		dropboxEl?.addEventListener("dragover", handleDragOver);
-		dropboxEl?.addEventListener("dragleave", handleDragLeave);
-		dropboxEl?.addEventListener("drop", handleDrop);
+		uploadImage(file);
+		closeModal();
+	};
+	
+	const handleDragOver = (e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragging(true);
+	};
 
-		return () => {
-			dropboxEl?.removeEventListener("dragover", handleDragOver);
-			dropboxEl?.removeEventListener("dragleave", handleDragLeave);
-			dropboxEl?.removeEventListener("drop", handleDrop);
-		};
-	}, []);
+	const handleDragLeave = (e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragging(false);
+	};
 
 	return (
 		<>
@@ -74,11 +78,14 @@ export default function Modal({ closeModal }: Modal) {
 					<form action="#" className="modal_file-form">
 						<div
 							id="dropbox"
+							onDragOver={handleDragOver}
+							onDragLeave={handleDragLeave}
+							onDrop={handleDrop}
 							style={isDragging ? { borderStyle: "dashed" } : {}}
 						>
-							<p>Drag and drop the file here</p>
+							<p>Drag and drop image here</p>
 							<span>OR</span>
-							<label htmlFor="id-1">attach the PDF</label>
+							<label htmlFor="id-1">attach the PNG</label>
 							<input
 								type="file"
 								name="fileInput"

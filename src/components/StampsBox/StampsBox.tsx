@@ -2,14 +2,24 @@ import { useRef } from "react";
 import "./StampsBox.scss";
 import { StampType } from "../../App";
 import { FiPlus } from "react-icons/fi";
+import StampImg from "./StampImg";
 
 type StampsBox = {
+	stampsImgs: {_id: string, stamp: string}[];
 	handleSetStamps: (newStamp: StampType) => void;
 	openModal: () => void;
 	scrollRef: React.RefObject<number>;
 };
 
-export default function StampsBox({ handleSetStamps, openModal, scrollRef }: StampsBox) {
+const BASE_URL = "https://stamping-tool-backend.onrender.com/";
+
+export default function StampsBox({
+	stampsImgs,
+	handleSetStamps,
+	openModal,
+	scrollRef,
+}: StampsBox) {
+
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const cloneRef = useRef<HTMLElement | null>(null);
 
@@ -50,8 +60,12 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 		startXRef.current = e.clientX;
 		startYRef.current = e.clientY;
 
-		cloneRef.current.style.top = `${cloneRef.current.offsetTop - newYRef.current}px`;
-		cloneRef.current.style.left = `${cloneRef.current.offsetLeft - newXRef.current}px`;
+		cloneRef.current.style.top = `${
+			cloneRef.current.offsetTop - newYRef.current
+		}px`;
+		cloneRef.current.style.left = `${
+			cloneRef.current.offsetLeft - newXRef.current
+		}px`;
 	};
 
 	const handleMouseUp = (e: MouseEvent) => {
@@ -66,7 +80,6 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 		const docRect = documentPage?.getBoundingClientRect();
 		const pageRect = canvasEl.getBoundingClientRect();
 		const cloneRect = clone.getBoundingClientRect();
-		console.log(cloneRect);
 
 		function checkTargetInsideDropBox(
 			dropboxRect: DOMRect,
@@ -112,30 +125,9 @@ export default function StampsBox({ handleSetStamps, openModal, scrollRef }: Sta
 				ref={containerRef}
 				onMouseDown={handleMouseDown}
 			>
-				<div className="stamp-item">
-					<img
-						draggable="false"
-						className="stamp"
-						src="/images/Stamp4.png"
-						alt="stamp_1"
-					/>
-				</div>
-				<div className="stamp-item">
-					<img
-						draggable="false"
-						className="stamp"
-						src="/images/Stamp6.png"
-						alt="stamp_2"
-					/>
-				</div>
-				<div className="stamp-item">
-					<img
-						draggable="false"
-						className="stamp"
-						src="/images/Stamp7.png"
-						alt="stamp_3"
-					/>
-				</div>
+				{stampsImgs.map(({_id, stamp}) => {
+					return <StampImg key={_id} imageURL={BASE_URL + stamp} />;
+				})}
 				<div className="stamp-item add-stamp_container" onClick={openModal}>
 					<FiPlus className="add-stamp_icon" size="2rem" />
 				</div>
