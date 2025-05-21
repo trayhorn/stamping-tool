@@ -18,7 +18,7 @@ export default function StampImg({ imageURL }: StampImg) {
           src={imageURL}
           alt="Stamp image"
           onLoad={() => setIsLoaded(true)}
-          onError={() => setIsLoaded(false)}
+          onError={() => console.log("error with downloading images")}
         />
         {!isLoaded && <Loader />}
       </div>

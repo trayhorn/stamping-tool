@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect, useRef } from "react";
+import { ChangeEvent, useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { pdfjs } from "react-pdf";
 import { PDFDocument, degrees } from 'pdf-lib';
@@ -9,6 +9,9 @@ import FilePreview from "./components/FilePreview/FilePreview";
 import StampsBox from "./components/StampsBox/StampsBox";
 import Modal from "./components/Modal/Modal";
 import "./App.scss";
+// import { getStampsImages } from "./api";
+// import { AxiosError } from "axios";
+// import axios from "axios";
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -82,6 +85,13 @@ function App() {
 	const handleAddStampImage = (newStamp: { _id: string; stamp: string }) => {
 		setStampsImgs((prev) => [...prev, newStamp]);
 	};
+
+	const handleSetStampImages = useCallback(
+		(result: { _id: string; stamp: string }[]) => {
+			setStampsImgs(result);
+		},
+		[]
+	);
 
 	const embedStamp = async (
 		{ top, left, url, width, height, rotate }: StampType,
@@ -160,11 +170,20 @@ function App() {
 			setPdfBlob(blob);
 		}
 
-		fetch("https://stamping-tool-backend.onrender.com/stamps")
-			.then((res) => res.json())
-			.then((result) => setStampsImgs(result))
-			.catch((error) => console.log(error));
+		// async function handleGetAllStampsImages() {
+		// 	try {
+		// 		const {data} = await getStampsImages();
+		// 		setStampsImgs(data);
+		// 	} catch (error: unknown) {
+		// 		if (axios.isAxiosError(error)) {
+		// 			console.log(error.message);
+		// 		} else {
+		// 			console.log("Unexpected error", error);
+		// 		}
+		// 	}
+		// }
 
+		// handleGetAllStampsImages();
 		renderPdf();
 	}, [file, pdfDocRef]);
 
@@ -184,6 +203,7 @@ function App() {
 					<main>
 						<StampsBox
 							stampsImgs={stampsImgs}
+							updateStampsImgs={handleSetStampImages}
 							handleSetStamps={handleSetStamps}
 							openModal={() => setIsModalShowing(true)}
 							scrollRef={scrollRef}

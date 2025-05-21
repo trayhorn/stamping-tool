@@ -1,11 +1,15 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./StampsBox.scss";
 import { StampType } from "../../App";
 import { FiPlus } from "react-icons/fi";
 import StampImg from "./StampImg";
+import { getStampsImages } from "../../api";
+import axios from "axios";
+
 
 type StampsBox = {
-	stampsImgs: {_id: string, stamp: string}[];
+	stampsImgs: { _id: string; stamp: string }[];
+	updateStampsImgs: (result: { _id: string; stamp: string }[]) => void;
 	handleSetStamps: (newStamp: StampType) => void;
 	openModal: () => void;
 	scrollRef: React.RefObject<number>;
@@ -15,10 +19,13 @@ const BASE_URL = "https://stamping-tool-backend.onrender.com/";
 
 export default function StampsBox({
 	stampsImgs,
+	updateStampsImgs,
 	handleSetStamps,
 	openModal,
 	scrollRef,
 }: StampsBox) {
+
+	const [isLoading, setIsLoading] = useState(false);
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const cloneRef = useRef<HTMLElement | null>(null);
@@ -117,21 +124,45 @@ export default function StampsBox({
 		document.removeEventListener("mouseup", handleMouseUp);
 	};
 
+	useEffect(() => {
+		async function handleGetAllStampsImages() {
+			try {
+				setIsLoading(true);
+				const { data } = await getStampsImages();
+				updateStampsImgs(data);
+			} catch (error: unknown) {
+				if (axios.isAxiosError(error)) {
+					console.log(error.message);
+				} else {
+					console.log("Unexpected error", error);
+				}
+			} finally {
+				setIsLoading(false);
+			}
+		}
+
+		handleGetAllStampsImages();
+	}, [updateStampsImgs])
+
 	return (
 		<div className="sidebar">
 			<h2 className="heading">Stamps</h2>
-			<div
-				className="stamps-list"
-				ref={containerRef}
-				onMouseDown={handleMouseDown}
-			>
-				{stampsImgs.map(({_id, stamp}) => {
-					return <StampImg key={_id} imageURL={BASE_URL + stamp} />;
-				})}
-				<div className="stamp-item add-stamp_container" onClick={openModal}>
-					<FiPlus className="add-stamp_icon" size="2rem" />
+			{isLoading ? (
+				<div>Fetching stamps from server</div>
+			) : (
+				<div
+					className="stamps-list"
+					ref={containerRef}
+					onMouseDown={handleMouseDown}
+				>
+					{stampsImgs.map(({ _id, stamp }) => {
+						return <StampImg key={_id} imageURL={BASE_URL + stamp} />;
+					})}
+					<div className="stamp-item add-stamp_container" onClick={openModal}>
+						<FiPlus className="add-stamp_icon" size="2rem" />
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }
