@@ -66,35 +66,41 @@ export default function Stamp({
 	};
 
 	return (
-		<>
-			{isShowing ? (
-				<div
-					ref={resizableRef}
-					className="dragable-box"
-					onMouseDown={handleMouseDown}
-					onMouseUp={handleMouseUp}
-					onClick={handleClick}
-					style={{
-						position: "absolute",
-						top,
-						left,
-						width,
-						height,
-						transform: `rotate(${rotate}deg)`,
-					}}
-				>
-					<FaRotateRight className="rotate-btn" onMouseDown={rotateMouseDown} />
+		<div
+			ref={resizableRef}
+			className={isShowing ? "dragable-box" : ""}
+			onMouseDown={isShowing ? handleMouseDown : undefined}
+			onMouseUp={isShowing ? handleMouseUp : undefined}
+			onClick={handleClick}
+			style={{
+				position: "absolute",
+				top,
+				left,
+				width,
+				height,
+				transform: `rotate(${rotate}deg)`,
+			}}
+		>
+			<img
+				draggable="false"
+				className="stamp clone"
+				src={url}
+				alt="stamp_1"
+			/>
 
-					<div className="delete-btn_wrapper" onClick={() => onDeleteClick(id)}>
+			{isShowing && (
+				<>
+					<FaRotateRight
+						className="rotate-btn"
+						onMouseDown={rotateMouseDown}
+					/>
+
+					<div
+						className="delete-btn_wrapper"
+						onClick={() => onDeleteClick(id)}
+					>
 						<FaRegTrashCan className="delete-btn" />
 					</div>
-
-					<img
-						draggable="false"
-						className="stamp clone"
-						src={url}
-						alt="stamp_1"
-					/>
 
 					<span
 						ref={resizeTopLeftRef}
@@ -112,27 +118,8 @@ export default function Stamp({
 						ref={resizeBottomRightRef}
 						className="resize-handle bottom-right"
 					></span>
-				</div>
-			) : (
-				<div
-					onClick={() => setIsShowing((prev: boolean) => !prev)}
-					style={{
-						position: "absolute",
-						top,
-						left,
-						width,
-						height,
-						transform: `rotate(${rotate}deg)`,
-					}}
-				>
-					<img
-						draggable="false"
-						className="stamp clone"
-						src={url}
-						alt="stamp_1"
-					/>
-				</div>
+				</>
 			)}
-		</>
+		</div>
 	);
 }

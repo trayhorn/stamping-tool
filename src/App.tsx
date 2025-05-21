@@ -9,9 +9,6 @@ import FilePreview from "./components/FilePreview/FilePreview";
 import StampsBox from "./components/StampsBox/StampsBox";
 import Modal from "./components/Modal/Modal";
 import "./App.scss";
-// import { getStampsImages } from "./api";
-// import { AxiosError } from "axios";
-// import axios from "axios";
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
