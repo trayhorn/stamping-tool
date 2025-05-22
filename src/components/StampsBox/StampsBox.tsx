@@ -5,6 +5,7 @@ import { FiPlus } from "react-icons/fi";
 import StampImg from "./StampImg";
 import { getStampsImages } from "../../api";
 import axios from "axios";
+import Loader from "../utils/Loader/Loader";
 
 
 type StampsBox = {
@@ -145,10 +146,16 @@ export default function StampsBox({
 	}, [updateStampsImgs])
 
 	return (
-		<div className="sidebar">
+		<div
+			className="sidebar"
+			style={{ position: isLoading ? "relative" : "static" }}
+		>
 			<h2 className="heading">Stamps</h2>
 			{isLoading ? (
-				<div>Fetching stamps from server</div>
+				<>
+					<Loader />
+					<div style={{ padding: "16px" }}>Fetching stamps from server...</div>
+				</>
 			) : (
 				<div
 					className="stamps-list"

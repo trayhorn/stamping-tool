@@ -167,20 +167,6 @@ function App() {
 			setPdfBlob(blob);
 		}
 
-		// async function handleGetAllStampsImages() {
-		// 	try {
-		// 		const {data} = await getStampsImages();
-		// 		setStampsImgs(data);
-		// 	} catch (error: unknown) {
-		// 		if (axios.isAxiosError(error)) {
-		// 			console.log(error.message);
-		// 		} else {
-		// 			console.log("Unexpected error", error);
-		// 		}
-		// 	}
-		// }
-
-		// handleGetAllStampsImages();
 		renderPdf();
 	}, [file, pdfDocRef]);
 
