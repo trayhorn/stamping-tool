@@ -2,6 +2,8 @@ import "./Modal.scss";
 import { useState, ChangeEvent } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { nanoid } from "nanoid";
+import Canvas from "../Canvas";
+import { BASE_URL } from "../../api";
 
 
 type Modal = {
@@ -9,10 +11,9 @@ type Modal = {
 	addStampImage: (newStamp: {_id: string, stamp: string}) => void;
 };
 
-const BASE_URL = "https://stamping-tool-backend.onrender.com";
-
 export default function Modal({ addStampImage, closeModal }: Modal) {
 	const [isDragging, setIsDragging] = useState<boolean>(false);
+	const [upload, setUpload] = useState(true);
 
 	const uploadImage = (file: File) => {
 		const formData = new FormData();
@@ -33,8 +34,8 @@ export default function Modal({ addStampImage, closeModal }: Modal) {
 		const inputEl = e.target as HTMLInputElement;
 		const file = inputEl.files?.[0];
 
-		if (!file) return;
 		console.log(file);
+		if (!file) return;
 
 		if (file.type !== "image/png") {
 			alert("Supported image type if PNG");
@@ -75,25 +76,37 @@ export default function Modal({ addStampImage, closeModal }: Modal) {
 		<>
 			<div className="modal-overlay">
 				<div className="modal">
-					<form action="#" className="modal_file-form">
-						<div
-							id="dropbox"
-							onDragOver={handleDragOver}
-							onDragLeave={handleDragLeave}
-							onDrop={handleDrop}
-							style={isDragging ? { borderStyle: "dashed" } : {}}
-						>
-							<p>Drag and drop image here</p>
-							<span>OR</span>
-							<label htmlFor="id-1">attach the PNG</label>
-							<input
-								type="file"
-								name="fileInput"
-								id="id-1"
-								onChange={handleChange}
-							/>
-						</div>
-					</form>
+					<div className="modal-controls_wrapper">
+						<button className="modal-controls" onClick={() => setUpload(true)}>
+							Upload
+						</button>
+						<button className="modal-controls" onClick={() => setUpload(false)}>
+							Draw
+						</button>
+					</div>
+					{upload ? (
+						<form action="#" className="modal_file-form">
+							<div
+								id="dropbox"
+								onDragOver={handleDragOver}
+								onDragLeave={handleDragLeave}
+								onDrop={handleDrop}
+								style={isDragging ? { borderStyle: "dashed" } : {}}
+							>
+								<p>Drag and drop image here</p>
+								<span>OR</span>
+								<label htmlFor="id-1">attach the PNG</label>
+								<input
+									type="file"
+									name="fileInput"
+									id="id-1"
+									onChange={handleChange}
+								/>
+							</div>
+						</form>
+					) : (
+						<Canvas addStampImage={addStampImage} closeModal={closeModal} />
+					)}
 					<button onClick={closeModal} className="closeBtn">
 						<IoCloseCircleOutline size={30} className="closeIcon" />
 					</button>

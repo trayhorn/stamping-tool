@@ -6,6 +6,7 @@ import StampImg from "./StampImg";
 import { getStampsImages } from "../../api";
 import axios from "axios";
 import Loader from "../utils/Loader/Loader";
+import { BASE_URL } from "../../api";
 
 
 type StampsBox = {
@@ -15,8 +16,6 @@ type StampsBox = {
 	openModal: () => void;
 	scrollRef: React.RefObject<number>;
 };
-
-const BASE_URL = "https://stamping-tool-backend.onrender.com/";
 
 export default function StampsBox({
 	stampsImgs,
@@ -163,7 +162,7 @@ export default function StampsBox({
 					onMouseDown={handleMouseDown}
 				>
 					{stampsImgs.map(({ _id, stamp }) => {
-						return <StampImg key={_id} imageURL={BASE_URL + stamp} />;
+						return <StampImg key={_id} imageURL={BASE_URL + "/" + stamp} />;
 					})}
 					<div className="stamp-item add-stamp_container" onClick={openModal}>
 						<FiPlus className="add-stamp_icon" size="2rem" />

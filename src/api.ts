@@ -1,6 +1,8 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "https://stamping-tool-backend.onrender.com";
+export const BASE_URL = "https://stamping-tool-backend.onrender.com";
+
+axios.defaults.baseURL = BASE_URL;
 
 export function getStampsImages() {
   return axios.get("/stamps");
