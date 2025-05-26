@@ -4,11 +4,13 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import { nanoid } from "nanoid";
 import Canvas from "../Canvas";
 import { BASE_URL } from "../../api";
+import { StampImg as StampImgType } from "../../App";
+
 
 
 type Modal = {
 	closeModal: () => void;
-	addStampImage: (newStamp: {_id: string, stamp: string}) => void;
+	addStampImage: (newStamp: StampImgType) => void;
 };
 
 export default function Modal({ addStampImage, closeModal }: Modal) {
@@ -25,7 +27,7 @@ export default function Modal({ addStampImage, closeModal }: Modal) {
 		})
 			.then((res) => res.json())
 			.then(({ originalname }) => {
-				addStampImage({_id: nanoid(), stamp: originalname});
+				addStampImage({_id: nanoid(), stamp: originalname, url: ""});
 			})
 			.catch((e) => console.log(e));
 	}

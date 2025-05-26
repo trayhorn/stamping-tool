@@ -1,9 +1,10 @@
 import { useCallback, useRef, useState } from "react";
 import { BASE_URL } from "../api";
 import { nanoid } from "nanoid";
+import { StampImg } from "../App";
 
 type CanvasType = {
-	addStampImage: (newStamp: { _id: string; stamp: string }) => void;
+	addStampImage: (newStamp: StampImg) => void;
 	closeModal: () => void;
 };
 
@@ -80,7 +81,7 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 		})
 			.then((res) => res.json())
 			.then(({ originalname }) => {
-				addStampImage({ _id: nanoid(), stamp: originalname });
+				addStampImage({ _id: nanoid(), stamp: originalname, url: "" });
 			})
 			.catch((e) => console.log(e));
 	};

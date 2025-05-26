@@ -6,12 +6,12 @@ import StampImg from "./StampImg";
 import { getStampsImages } from "../../api";
 import axios from "axios";
 import Loader from "../utils/Loader/Loader";
-import { BASE_URL } from "../../api";
+import { StampImg as StampImgType } from "../../App";
 
 
 type StampsBox = {
-	stampsImgs: { _id: string; stamp: string }[];
-	updateStampsImgs: (result: { _id: string; stamp: string }[]) => void;
+	stampsImgs: StampImgType[];
+	updateStampsImgs: (result: StampImgType[]) => void;
 	handleSetStamps: (newStamp: StampType) => void;
 	openModal: () => void;
 	scrollRef: React.RefObject<number>;
@@ -161,8 +161,8 @@ export default function StampsBox({
 					ref={containerRef}
 					onMouseDown={handleMouseDown}
 				>
-					{stampsImgs.map(({ _id, stamp }) => {
-						return <StampImg key={_id} imageURL={BASE_URL + "/" + stamp} />;
+					{stampsImgs.map(({ _id, stamp, url }) => {
+						return <StampImg key={_id} imageURL={url} name={stamp} />;
 					})}
 					<div className="stamp-item add-stamp_container" onClick={openModal}>
 						<FiPlus className="add-stamp_icon" size="2rem" />

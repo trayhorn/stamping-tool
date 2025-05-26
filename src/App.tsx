@@ -27,6 +27,12 @@ export type StampType = {
 	rotate: number;
 };
 
+export type StampImg = {
+	_id: string;
+	stamp: string;
+	url: string;
+};
+
 function App() {
 	const [file, setFile] = useState<File | null>(null);
 	const [fileUrl, setFileUrl] = useState<string>("");
@@ -35,7 +41,7 @@ function App() {
 	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
 	const [isModalShowing, setIsModalShowing] = useState(false);
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
-	const [stampsImgs, setStampsImgs] = useState<{_id: string, stamp: string}[]>([]);
+	const [stampsImgs, setStampsImgs] = useState<StampImg[]>([]);
 
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 	const scrollRef = useRef<number>(0);
@@ -79,16 +85,13 @@ function App() {
 		});
 	};
 
-	const handleAddStampImage = (newStamp: { _id: string; stamp: string }) => {
+	const handleAddStampImage = (newStamp: StampImg) => {
 		setStampsImgs((prev) => [...prev, newStamp]);
 	};
 
-	const handleSetStampImages = useCallback(
-		(result: { _id: string; stamp: string }[]) => {
-			setStampsImgs(result);
-		},
-		[]
-	);
+	const handleSetStampImages = useCallback((result: StampImg[]) => {
+		setStampsImgs(result);
+	}, []);
 
 	const embedStamp = async (
 		{ top, left, url, width, height, rotate }: StampType,
