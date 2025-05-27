@@ -141,6 +141,7 @@ function App() {
 					if (stamps[i + 1]) {
 						return Promise.all(
 							stamps[i + 1].map(async (el) => {
+								console.log(el);
 								return embedStamp(el, i);
 							})
 						);

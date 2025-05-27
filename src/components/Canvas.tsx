@@ -80,8 +80,8 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 			body: formData,
 		})
 			.then((res) => res.json())
-			.then(({ originalname }) => {
-				addStampImage({ _id: nanoid(), stamp: originalname, url: "" });
+			.then(({ originalname, url }) => {
+				addStampImage({ _id: nanoid(), stamp: originalname, url});
 			})
 			.catch((e) => console.log(e));
 	};
