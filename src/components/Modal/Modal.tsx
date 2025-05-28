@@ -2,11 +2,9 @@ import "./Modal.scss";
 import { useState, ChangeEvent } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { nanoid } from "nanoid";
-import Canvas from "../Canvas";
+import Canvas from "../Canvas/Canvas";
 import { BASE_URL } from "../../api";
 import { StampImg as StampImgType } from "../../App";
-
-
 
 type Modal = {
 	closeModal: () => void;
@@ -27,10 +25,10 @@ export default function Modal({ addStampImage, closeModal }: Modal) {
 		})
 			.then((res) => res.json())
 			.then(({ originalname, url }) => {
-				addStampImage({_id: nanoid(), stamp: originalname, url});
+				addStampImage({ _id: nanoid(), stamp: originalname, url });
 			})
 			.catch((e) => console.log(e));
-	}
+	};
 
 	const handleChange = (e: ChangeEvent) => {
 		const inputEl = e.target as HTMLInputElement;
@@ -63,7 +61,7 @@ export default function Modal({ addStampImage, closeModal }: Modal) {
 		uploadImage(file);
 		closeModal();
 	};
-	
+
 	const handleDragOver = (e: React.DragEvent) => {
 		e.preventDefault();
 		setIsDragging(true);

@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from "react";
-import { BASE_URL } from "../api";
+import { BASE_URL } from "../../api";
 import { nanoid } from "nanoid";
-import { StampImg } from "../App";
+import { StampImg } from "../../App";
+import "./Canvas.scss";
 
 type CanvasType = {
 	addStampImage: (newStamp: StampImg) => void;
@@ -9,12 +10,16 @@ type CanvasType = {
 };
 
 export default function Canvas({ addStampImage, closeModal }: CanvasType) {
+	const [isDisabled, setIsDisabled] = useState(true);
+	const [drawing, setDrawing] = useState(false);
+
+	const saveBtnRef = useRef<HTMLButtonElement | null>(null);
+	const clearBtnRef = useRef<HTMLButtonElement | null>(null);
+
 	const startXRef = useRef(0);
 	const startYRef = useRef(0);
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-	const [drawing, setDrawing] = useState(false);
 
 	const handleMouseDown = (e: React.MouseEvent) => {
 		const canvas = canvasRef.current;
@@ -48,6 +53,7 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 	};
 
 	const handleMouseUp = () => {
+		setIsDisabled(false);
 		setDrawing(false);
 	};
 
@@ -81,19 +87,28 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 		})
 			.then((res) => res.json())
 			.then(({ originalname, url }) => {
-				addStampImage({ _id: nanoid(), stamp: originalname, url});
+				addStampImage({ _id: nanoid(), stamp: originalname, url });
 			})
 			.catch((e) => console.log(e));
 	};
 
+	const handleClearClick = () => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+
+
+		const ctx = canvas.getContext("2d");
+		ctx?.clearRect(0, 0, canvas.width, canvas.height);
+		setIsDisabled(true);
+	}
+
 	const handleSaveClick = () => {
 		const canvas = canvasRef.current;
-
 		if (!canvas) return;
 
 		canvas.toBlob(async (blob) => {
 			if (!blob) return;
-			const file = new File([blob], "test.png");
+			const file = new File([blob], nanoid() + "png");
 
 			uploadImage(file);
 			closeModal();
@@ -104,16 +119,31 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 		<div>
 			<canvas
 				ref={canvasRef}
-				id="myCanvasElement"
+				id="stampsCanvas"
 				width={500}
 				height={500}
 				onMouseDown={handleMouseDown}
 				onMouseMove={drawing ? handleMouseMove : undefined}
 				onMouseUp={handleMouseUp}
 			></canvas>
-			<button className="canvas-button" onClick={handleSaveClick}>
-				Save
-			</button>
+			<div className="canvas-button_wrapper">
+				<button
+					ref={clearBtnRef}
+					className="canvas-button"
+					disabled={isDisabled}
+					onClick={handleClearClick}
+				>
+					Clear
+				</button>
+				<button
+					ref={saveBtnRef}
+					className="canvas-button"
+					disabled={isDisabled}
+					onClick={handleSaveClick}
+				>
+					Save
+				</button>
+			</div>
 		</div>
 	);
 }
