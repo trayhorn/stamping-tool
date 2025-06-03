@@ -1,7 +1,8 @@
-import { useCallback, useRef, useState } from "react";
-import { BASE_URL } from "../../api";
+import { useRef } from "react";
 import { nanoid } from "nanoid";
+import { BASE_URL } from "../../api";
 import { StampImg } from "../../App";
+import useDraw from "../../hooks/useDraw";
 import "./Canvas.scss";
 
 type CanvasType = {
@@ -10,72 +11,16 @@ type CanvasType = {
 };
 
 export default function Canvas({ addStampImage, closeModal }: CanvasType) {
-	const [isDisabled, setIsDisabled] = useState(true);
-	const [drawing, setDrawing] = useState(false);
-
-	const saveBtnRef = useRef<HTMLButtonElement | null>(null);
-	const clearBtnRef = useRef<HTMLButtonElement | null>(null);
-
-	const startXRef = useRef(0);
-	const startYRef = useRef(0);
-
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-	const handleMouseDown = (e: React.MouseEvent) => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-
-		const canvasRect = canvas.getBoundingClientRect();
-
-		startXRef.current = e.clientX - canvasRect.left;
-		startYRef.current = e.clientY - canvasRect.top;
-
-		setDrawing(true);
-	};
-
-	const handleMouseMove = (e: React.MouseEvent) => {
-		if (!drawing) return;
-
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-
-		const canvasRect = canvas.getBoundingClientRect();
-
-		const { clientX, clientY } = e;
-
-		const dx = clientX - canvasRect.left;
-		const dy = clientY - canvasRect.top;
-
-		drawLine(startXRef.current, startYRef.current, dx, dy);
-
-		startXRef.current = dx;
-		startYRef.current = dy;
-	};
-
-	const handleMouseUp = () => {
-		setIsDisabled(false);
-		setDrawing(false);
-	};
-
-	const drawLine = useCallback(
-		(startX: number, startY: number, dx: number, dy: number) => {
-			const canvas = document.getElementById(
-				"myCanvasElement"
-			) as HTMLCanvasElement;
-			if (canvas) {
-				const ctx = canvas.getContext("2d");
-				if (ctx) {
-					ctx.lineJoin = "round";
-					ctx.lineWidth = 3;
-					ctx.beginPath();
-					ctx.moveTo(startX, startY);
-					ctx.lineTo(dx, dy);
-					ctx.stroke();
-				}
-			}
-		},
-		[]
-	);
+	const {
+		handleMouseDown,
+		handleMouseMove,
+		handleMouseUp,
+		handleSetDisabled,
+		drawing,
+		isDisabled,
+	} = useDraw(canvasRef);
 
 	const uploadImage = (file: File) => {
 		const formData = new FormData();
@@ -99,7 +44,7 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 
 		const ctx = canvas.getContext("2d");
 		ctx?.clearRect(0, 0, canvas.width, canvas.height);
-		setIsDisabled(true);
+		handleSetDisabled(true);
 	}
 
 	const handleSaveClick = () => {
@@ -128,7 +73,6 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 			></canvas>
 			<div className="canvas-button_wrapper">
 				<button
-					ref={clearBtnRef}
 					className="canvas-button"
 					disabled={isDisabled}
 					onClick={handleClearClick}
@@ -136,7 +80,6 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 					Clear
 				</button>
 				<button
-					ref={saveBtnRef}
 					className="canvas-button"
 					disabled={isDisabled}
 					onClick={handleSaveClick}
