@@ -1,12 +1,16 @@
 import { useState } from "react";
 import Loader from "../utils/Loader/Loader";
+import { MdDeleteOutline } from "react-icons/md";
+import "./StampImg.scss";
 
 type StampImg = {
-  name: string;
+	id: string;
+	name: string;
 	imageURL: string;
+	handleStampDelete: (id: string) => void;
 };
 
-export default function StampImg({ imageURL, name }: StampImg) {
+export default function StampImg({ imageURL, name, id, handleStampDelete }: StampImg) {
 	const [isLoaded, setIsLoaded] = useState(false);
 
 	return (
@@ -20,6 +24,10 @@ export default function StampImg({ imageURL, name }: StampImg) {
 					alt={name}
 					onLoad={() => setIsLoaded(true)}
 					onError={() => console.log("error with downloading images")}
+				/>
+				<MdDeleteOutline
+					onClick={() => handleStampDelete(id)}
+					className="delete-icon"
 				/>
 				{!isLoaded && <Loader />}
 			</div>

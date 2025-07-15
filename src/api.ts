@@ -9,3 +9,7 @@ axios.defaults.baseURL = BASE_URL;
 export function getStampsImages() {
   return axios.get("/stamps");
 }
+
+export function deleteStampImage(imageName: string) {
+  return axios.delete(`/stamp/delete/${imageName}`)
+}

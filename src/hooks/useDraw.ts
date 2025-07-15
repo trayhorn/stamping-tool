@@ -57,16 +57,12 @@ export default function useDraw(
 			}
 		}
   };
-  
-  const handleSetDisabled = (value: boolean) => {
-    setIsDisabled(value);
-  }
 
 	return {
 		handleMouseDown,
 		handleMouseMove,
-    handleMouseUp,
-    handleSetDisabled,
+		handleMouseUp,
+		handleSetDisabled: () => setIsDisabled(true),
 		drawing,
 		isDisabled,
 	};

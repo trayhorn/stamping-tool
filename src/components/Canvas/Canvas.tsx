@@ -13,6 +13,8 @@ type CanvasType = {
 export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+	console.log("Canvas renders");
+
 	const {
 		handleMouseDown,
 		handleMouseMove,
@@ -31,8 +33,8 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 			body: formData,
 		})
 			.then((res) => res.json())
-			.then(({ originalname, url }) => {
-				addStampImage({ _id: nanoid(), stamp: originalname, url });
+			.then(({ originalname, url, _id }) => {
+				addStampImage({ _id, stamp: originalname, url });
 			})
 			.catch((e) => console.log(e));
 	};
@@ -41,10 +43,9 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-
 		const ctx = canvas.getContext("2d");
 		ctx?.clearRect(0, 0, canvas.width, canvas.height);
-		handleSetDisabled(true);
+		handleSetDisabled();
 	}
 
 	const handleSaveClick = () => {

@@ -3,7 +3,7 @@ import "./StampsBox.scss";
 import { StampType } from "../../App";
 import { FiPlus } from "react-icons/fi";
 import StampImg from "./StampImg";
-import { getStampsImages } from "../../api";
+import { getStampsImages, deleteStampImage } from "../../api";
 import axios from "axios";
 import Loader from "../utils/Loader/Loader";
 import { StampImg as StampImgType } from "../../App";
@@ -144,6 +144,19 @@ export default function StampsBox({
 		handleGetAllStampsImages();
 	}, [updateStampsImgs])
 
+	const handleStampDelete = async (id: string) => {
+		try {
+			await deleteStampImage(id);
+			updateStampsImgs(stampsImgs.filter((stamp) => stamp._id !== id));
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.log(error.message);
+			} else {
+				console.log("Unexpected error", error);
+			}
+		}
+	};
+
 	return (
 		<div
 			className="sidebar"
@@ -162,7 +175,15 @@ export default function StampsBox({
 					onMouseDown={handleMouseDown}
 				>
 					{stampsImgs.map(({ _id, stamp, url }) => {
-						return <StampImg key={_id} imageURL={url} name={stamp} />;
+						return (
+							<StampImg
+								key={_id}
+								imageURL={url}
+								name={stamp}
+								id={_id}
+								handleStampDelete={handleStampDelete}
+							/>
+						);
 					})}
 					<div className="stamp-item add-stamp_container" onClick={openModal}>
 						<FiPlus className="add-stamp_icon" size="2rem" />

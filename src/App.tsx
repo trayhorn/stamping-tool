@@ -2,6 +2,7 @@ import { ChangeEvent, useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { pdfjs } from "react-pdf";
 import { PDFDocument, degrees } from 'pdf-lib';
+import { useModal } from "./hooks/useModal";
 import Header from "./components/Header/Header";
 import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
@@ -39,9 +40,9 @@ function App() {
 	const [numPages, setNumPages] = useState<number>();
 	const [pageNum, setPageNum] = useState<number>(1);
 	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
-	const [isModalShowing, setIsModalShowing] = useState(false);
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 	const [stampsImgs, setStampsImgs] = useState<StampImg[]>([]);
+	const { isModalShowing, openModal, closeModal } = useModal();
 
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 	const scrollRef = useRef<number>(0);
@@ -192,7 +193,7 @@ function App() {
 							stampsImgs={stampsImgs}
 							updateStampsImgs={handleSetStampImages}
 							handleSetStamps={handleSetStamps}
-							openModal={() => setIsModalShowing(true)}
+							openModal={openModal}
 							scrollRef={scrollRef}
 						/>
 						<FileView
@@ -220,7 +221,7 @@ function App() {
 			{isModalShowing &&
 				createPortal(
 					<Modal
-						closeModal={() => setIsModalShowing(false)}
+						closeModal={closeModal}
 						addStampImage={handleAddStampImage}
 					/>,
 					document.body

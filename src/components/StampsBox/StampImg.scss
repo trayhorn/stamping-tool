@@ -1,0 +1,24 @@
+@use "../../variables" as *;
+
+.stamp-item {
+  .delete-icon {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    color: $primary-accent-color;
+    width: 17px;
+    height: 17px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease-out;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &:hover .delete-icon {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

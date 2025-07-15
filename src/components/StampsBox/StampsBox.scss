@@ -11,9 +11,10 @@
     position: relative;
     border: 1px solid $border-color;
     cursor: pointer;
-  }
-  .stamp-item:hover {
-    border-color: #2A70C0;
+
+    &:hover {
+      border-color: #2A70C0;
+    }
   }
 
   .stamp {

@@ -1,7 +1,6 @@
 import "./Modal.scss";
 import { useState, ChangeEvent } from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
-import { nanoid } from "nanoid";
 import Canvas from "../Canvas/Canvas";
 import { BASE_URL } from "../../api";
 import { StampImg as StampImgType } from "../../App";
@@ -24,8 +23,8 @@ export default function Modal({ addStampImage, closeModal }: Modal) {
 			body: formData,
 		})
 			.then((res) => res.json())
-			.then(({ originalname, url }) => {
-				addStampImage({ _id: nanoid(), stamp: originalname, url });
+			.then(({ originalname, url, _id }) => {
+				addStampImage({ _id, stamp: originalname, url });
 			})
 			.catch((e) => console.log(e));
 	};
