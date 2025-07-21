@@ -1,0 +1,35 @@
+@use "../../variables" as *;
+
+.delete-popup {
+  .title {
+    font-size: 1.5rem;
+    margin-block: $spacing-md;
+  }
+
+  .buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-sm;
+  }
+
+  .button {
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: $spacing-sm;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+
+    &.delete {
+      background-color: $primary-accent-color;
+      color: #FFFF;
+    }
+    &.cancel {
+      background-color: transparent;
+      color: #111827;
+      border: 1px solid $border-color;
+    }
+  }
+}
