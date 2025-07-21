@@ -1,14 +1,11 @@
 import { ChangeEvent, useState, useEffect, useRef, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { pdfjs } from "react-pdf";
 import { PDFDocument, degrees } from 'pdf-lib';
-import { useModal } from "./hooks/useModal";
 import Header from "./components/Header/Header";
 import FileForm from "./components/FileForm/FileForm";
 import FileView from "./components/FileView/FileView";
 import FilePreview from "./components/FilePreview/FilePreview";
 import StampsBox from "./components/StampsBox/StampsBox";
-import Modal from "./components/Modal/Modal";
 import "./App.scss";
 
 
@@ -42,7 +39,6 @@ function App() {
 	const [stamps, setStamps] = useState<Record<number, StampType[]>>({});
 	const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
 	const [stampsImgs, setStampsImgs] = useState<StampImg[]>([]);
-	const { isModalShowing, openModal, closeModal } = useModal();
 
 	const pdfDocRef = useRef<PDFDocument | null>(null);
 	const scrollRef = useRef<number>(0);
@@ -193,8 +189,8 @@ function App() {
 							stampsImgs={stampsImgs}
 							updateStampsImgs={handleSetStampImages}
 							handleSetStamps={handleSetStamps}
-							openModal={openModal}
 							scrollRef={scrollRef}
+							addStampImage={handleAddStampImage}
 						/>
 						<FileView
 							pdfBlob={pdfBlob}
@@ -218,14 +214,6 @@ function App() {
 					onDrop={(file: File) => setFile(file)}
 				/>
 			)}
-			{isModalShowing &&
-				createPortal(
-					<Modal
-						closeModal={closeModal}
-						addStampImage={handleAddStampImage}
-					/>,
-					document.body
-				)}
 		</>
 	);
 }

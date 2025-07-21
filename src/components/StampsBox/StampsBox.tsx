@@ -1,31 +1,34 @@
 import { useEffect, useRef, useState } from "react";
-import "./StampsBox.scss";
-import { StampType } from "../../App";
-import { FiPlus } from "react-icons/fi";
-import StampImg from "./StampImg";
-import { getStampsImages, deleteStampImage } from "../../api";
+import { useModal } from "../../hooks/useModal";
 import axios from "axios";
+import { getStampsImages, deleteStampImage } from "../../api";
+import { StampType, StampImg as StampImgType } from "../../App";
+import StampImg from "./StampImg";
 import Loader from "../utils/Loader/Loader";
-import { StampImg as StampImgType } from "../../App";
+import ReactModal from "../ReactModal/ReactModal";
+import UploadStampManager from "../UploadStampManager/UploadStampManager";
+import { FiPlus } from "react-icons/fi";
+import "./StampsBox.scss";
 
 
 type StampsBox = {
 	stampsImgs: StampImgType[];
 	updateStampsImgs: (result: StampImgType[]) => void;
 	handleSetStamps: (newStamp: StampType) => void;
-	openModal: () => void;
 	scrollRef: React.RefObject<number>;
+	addStampImage: (newStamp: StampImgType) => void;
 };
 
 export default function StampsBox({
 	stampsImgs,
 	updateStampsImgs,
 	handleSetStamps,
-	openModal,
+	addStampImage,
 	scrollRef,
 }: StampsBox) {
 
 	const [isLoading, setIsLoading] = useState(false);
+	const { isModalShowing, openModal, closeModal } = useModal();
 
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const cloneRef = useRef<HTMLElement | null>(null);
@@ -158,38 +161,48 @@ export default function StampsBox({
 	};
 
 	return (
-		<div
-			className="sidebar"
-			style={{ position: isLoading ? "relative" : "static" }}
-		>
-			<h2 className="heading">Stamps</h2>
-			{isLoading ? (
-				<>
-					<Loader />
-					<div style={{ padding: "16px" }}>Fetching stamps from server...</div>
-				</>
-			) : (
-				<div
-					className="stamps-list"
-					ref={containerRef}
-					onMouseDown={handleMouseDown}
-				>
-					{stampsImgs.map(({ _id, stamp, url }) => {
-						return (
-							<StampImg
-								key={_id}
-								imageURL={url}
-								name={stamp}
-								id={_id}
-								handleStampDelete={handleStampDelete}
-							/>
-						);
-					})}
-					<div className="stamp-item add-stamp_container" onClick={openModal}>
-						<FiPlus className="add-stamp_icon" size="2rem" />
+		<>
+			<div
+				className="sidebar"
+				style={{ position: isLoading ? "relative" : "static" }}
+			>
+				<h2 className="heading">Stamps</h2>
+				{isLoading ? (
+					<>
+						<Loader />
+						<div style={{ padding: "16px" }}>
+							Fetching stamps from server...
+						</div>
+					</>
+				) : (
+					<div
+						className="stamps-list"
+						ref={containerRef}
+						onMouseDown={handleMouseDown}
+					>
+						{stampsImgs.map(({ _id, stamp, url }) => {
+							return (
+								<StampImg
+									key={_id}
+									imageURL={url}
+									name={stamp}
+									id={_id}
+									handleStampDelete={handleStampDelete}
+								/>
+							);
+						})}
+						<div className="stamp-item add-stamp_container" onClick={openModal}>
+							<FiPlus className="add-stamp_icon" size="2rem" />
+						</div>
 					</div>
-				</div>
-			)}
-		</div>
+				)}
+			</div>
+			<ReactModal isModalShowing={isModalShowing} closeModal={closeModal}>
+				<UploadStampManager
+					closeModal={closeModal}
+					addStampImage={addStampImage}
+				/>
+			</ReactModal>
+		</>
 	);
 }

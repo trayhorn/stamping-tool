@@ -13,8 +13,6 @@ type CanvasType = {
 export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-	console.log("Canvas renders");
-
 	const {
 		handleMouseDown,
 		handleMouseMove,
