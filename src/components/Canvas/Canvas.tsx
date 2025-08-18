@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { BASE_URL } from "../../api";
 import { StampImg } from "../../App";
 import useDraw from "../../hooks/useDraw";
+import { useTranslation } from "react-i18next";
 import "./Canvas.scss";
 
 type CanvasType = {
@@ -11,6 +12,7 @@ type CanvasType = {
 };
 
 export default function Canvas({ addStampImage, closeModal }: CanvasType) {
+	const { t } = useTranslation();
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
 	const {
@@ -76,14 +78,14 @@ export default function Canvas({ addStampImage, closeModal }: CanvasType) {
 					disabled={isDisabled}
 					onClick={handleClearClick}
 				>
-					Clear
+					{t("clear")}
 				</button>
 				<button
 					className="canvas-button"
 					disabled={isDisabled}
 					onClick={handleSaveClick}
 				>
-					Save
+					{t("save")}
 				</button>
 			</div>
 		</div>

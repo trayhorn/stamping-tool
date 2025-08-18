@@ -1,6 +1,7 @@
 import "./Header.scss";
 import { DownloadIcon, SaveIcon } from "../utils/icons";
 import { useTranslation } from "react-i18next";
+import LangSwitch from "../LangSwitch/LangSwitch";
 
 type Header = {
 	file: File;
@@ -19,7 +20,7 @@ export default function Header({
 	clearStamps,
 	saveDocument,
 }: Header) {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 
 	const handleCancelClick = () => {
 		clearFileUrl();
@@ -33,10 +34,7 @@ export default function Header({
 		<header className="header">
 			<nav className="nav">
 				<p className="document_title">{file.name}</p>
-				<div>
-					<button onClick={() => i18n.changeLanguage("en")}>English</button>
-					<button onClick={() => i18n.changeLanguage("ua")}>Ukrainian</button>
-				</div>
+				<LangSwitch />
 				<div className="buttons-container">
 					<button className="button secondary" onClick={handleCancelClick}>
 						{t("Cancel")}

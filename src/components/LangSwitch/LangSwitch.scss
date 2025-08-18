@@ -1,0 +1,53 @@
+@use "../../variables" as *;
+
+.langSwitch-container {
+  position: relative;
+  min-width: 150px;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.lang-switch {
+  border: 1px solid $primary-accent-color;
+  border-radius: 5px;
+  appearance: none;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  outline: none;
+  cursor: pointer;
+}
+
+.custom-arrow {
+  --size: 0.5em;
+  position: absolute;
+  width: 3em;
+  height: 100%;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+  pointer-events: none;
+}
+.custom-arrow::before,
+.custom-arrow::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.custom-arrow::before {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-bottom: var(--size) solid $primary-accent-color;
+  top: 35%;
+}
+
+.custom-arrow::after {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-top: var(--size) solid $primary-accent-color;
+  top: 65%;
+}
