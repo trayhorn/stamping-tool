@@ -4,6 +4,7 @@ import { IoCloseCircleOutline } from "react-icons/io5";
 import Canvas from "../Canvas/Canvas";
 import UploadStampForm from "../UploadStampForm/UploadStampForm";
 import { StampImg as StampImgType } from "../../App";
+import { useTranslation } from "react-i18next";
 
 type UploadStampManagerProps = {
 	closeModal: () => void;
@@ -14,16 +15,17 @@ export default function UploadStampManager({
 	addStampImage,
 	closeModal,
 }: UploadStampManagerProps) {
+	const { t } = useTranslation();
 	const [upload, setUpload] = useState(true);
 
 	return (
 		<div>
 			<div className="modal-controls_wrapper">
 				<button className="modal-controls" onClick={() => setUpload(true)}>
-					Upload
+					{t("Upload")}
 				</button>
 				<button className="modal-controls" onClick={() => setUpload(false)}>
-					Draw
+					{t("Draw")}
 				</button>
 			</div>
 			{upload ? (

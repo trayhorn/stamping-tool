@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useModal } from "../../hooks/useModal";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { getStampsImages, deleteStampImage } from "../../api";
 import { StampType, StampImg as StampImgType } from "../../App";
@@ -26,6 +27,7 @@ export default function StampsBox({
 	addStampImage,
 	scrollRef,
 }: StampsBox) {
+	const { t } = useTranslation();
 
 	const [isLoading, setIsLoading] = useState(false);
 	const { isModalShowing, openModal, closeModal } = useModal();
@@ -166,12 +168,12 @@ export default function StampsBox({
 				className="sidebar"
 				style={{ position: isLoading ? "relative" : "static" }}
 			>
-				<h2 className="heading">Stamps</h2>
+				<h2 className="heading">{t("Stamps")}</h2>
 				{isLoading ? (
 					<>
 						<Loader />
 						<div style={{ padding: "16px" }}>
-							Fetching stamps from server...
+							{t("Fetching")}
 						</div>
 					</>
 				) : (

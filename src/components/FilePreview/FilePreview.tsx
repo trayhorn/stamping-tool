@@ -1,5 +1,6 @@
 import "./FilePreview.scss";
 import { Document, Thumbnail } from "react-pdf";
+import { useTranslation } from "react-i18next";
 
 type FilePreview = {
 	file: File;
@@ -13,9 +14,11 @@ export default function FilePreview({
 	numPages,
 	handleItemClick,
 }: FilePreview) {
+	const { t } = useTranslation();
+
 	return (
 		<div className="sidebar sidebar-preview">
-			<h2 className="heading">Preview</h2>
+			<h2 className="heading">{t("Preview")}</h2>
 			<Document
 				className="thumbnail-document"
 				file={file}

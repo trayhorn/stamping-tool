@@ -1,5 +1,6 @@
 import "./Header.scss";
 import { DownloadIcon, SaveIcon } from "../utils/icons";
+import { useTranslation } from "react-i18next";
 
 type Header = {
 	file: File;
@@ -18,7 +19,9 @@ export default function Header({
 	clearStamps,
 	saveDocument,
 }: Header) {
-	const handleClick = () => {
+	const { t, i18n } = useTranslation();
+
+	const handleCancelClick = () => {
 		clearFileUrl();
 		clearFile();
 		clearStamps();
@@ -30,9 +33,13 @@ export default function Header({
 		<header className="header">
 			<nav className="nav">
 				<p className="document_title">{file.name}</p>
+				<div>
+					<button onClick={() => i18n.changeLanguage("en")}>English</button>
+					<button onClick={() => i18n.changeLanguage("ua")}>Ukrainian</button>
+				</div>
 				<div className="buttons-container">
-					<button className="button secondary" onClick={handleClick}>
-						Cancel
+					<button className="button secondary" onClick={handleCancelClick}>
+						{t("Cancel")}
 					</button>
 					<button
 						className="download_button"
@@ -40,12 +47,12 @@ export default function Header({
 					>
 						<a href={urlToDownload} download={fileName} className="primary">
 							<DownloadIcon />
-							Download PDF
+							{t("Download PDF")}
 						</a>
 					</button>
 					<button className="button primary" onClick={saveDocument}>
 						<SaveIcon />
-						Save
+						{t("Save")}
 					</button>
 				</div>
 			</nav>

@@ -1,4 +1,5 @@
 import "./DeletePopUp.scss";
+import { useTranslation } from "react-i18next";
 
 type PopUpProps = {
 	closeModal: () => void;
@@ -7,13 +8,14 @@ type PopUpProps = {
 };
 
 export default function DeletePopUp({ closeModal, handleStampDelete, id }: PopUpProps) {
+	const { t } = useTranslation();
 
 	return (
 		<div className="delete-popup">
-			<h2 className="title">Are you sure you want to delete this stamp?</h2>
+			<h2 className="title">{t("deleteConfirmation")}</h2>
 			<div className="buttons-container">
-				<button className="button delete" onClick={() => handleStampDelete(id)}>Delete</button>
-				<button className="button cancel" onClick={closeModal}>Cancel</button>
+				<button className="button delete" onClick={() => handleStampDelete(id)}>{t("delete")}</button>
+				<button className="button cancel" onClick={closeModal}>{t("cancel")}</button>
 			</div>
 		</div>
 	);
