@@ -10,6 +10,7 @@
   .stamp-item {
     position: relative;
     border: 1px solid $border-color;
+    height: min-content;
     cursor: pointer;
 
     &:hover {

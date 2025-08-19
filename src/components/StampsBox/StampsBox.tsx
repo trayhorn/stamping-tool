@@ -10,6 +10,7 @@ import ReactModal from "../ReactModal/ReactModal";
 import UploadStampManager from "../UploadStampManager/UploadStampManager";
 import { FiPlus } from "react-icons/fi";
 import "./StampsBox.scss";
+import LangSwitch from "../LangSwitch/LangSwitch";
 
 
 type StampsBox = {
@@ -198,6 +199,7 @@ export default function StampsBox({
 						</div>
 					</div>
 				)}
+				<LangSwitch />
 			</div>
 			<ReactModal isModalShowing={isModalShowing} closeModal={closeModal}>
 				<UploadStampManager

@@ -4,7 +4,7 @@
   position: relative;
   min-width: 150px;
   width: max-content;
-  margin: 0 auto;
+  margin: auto auto $spacing-md;
 }
 
 .lang-switch {
@@ -39,15 +39,23 @@
 }
 
 .custom-arrow::before {
+  display: none;
   border-left: var(--size) solid transparent;
   border-right: var(--size) solid transparent;
   border-bottom: var(--size) solid $primary-accent-color;
-  top: 35%;
+  top: 50%;
 }
 
 .custom-arrow::after {
   border-left: var(--size) solid transparent;
   border-right: var(--size) solid transparent;
   border-top: var(--size) solid $primary-accent-color;
-  top: 65%;
+  top: 50%;
+}
+
+.lang-switch.is-open ~ .custom-arrow::before {
+  display: block;
+}
+.lang-switch.is-open ~ .custom-arrow::after {
+  display: none;
 }

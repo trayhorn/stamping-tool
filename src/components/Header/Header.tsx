@@ -1,7 +1,6 @@
 import "./Header.scss";
 import { DownloadIcon, SaveIcon } from "../utils/icons";
 import { useTranslation } from "react-i18next";
-import LangSwitch from "../LangSwitch/LangSwitch";
 
 type Header = {
 	file: File;
@@ -34,7 +33,6 @@ export default function Header({
 		<header className="header">
 			<nav className="nav">
 				<p className="document_title">{file.name}</p>
-				<LangSwitch />
 				<div className="buttons-container">
 					<button className="button secondary" onClick={handleCancelClick}>
 						{t("Cancel")}

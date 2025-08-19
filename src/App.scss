@@ -14,6 +14,8 @@ main {
 }
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
   min-width: 240px;
   border: 1px solid $border-color;
   border-top: none;
